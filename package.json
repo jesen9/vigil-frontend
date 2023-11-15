@@ -1,0 +1,46 @@
+{
+  "name": "react-next-base",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "build:staging": "ENVIRONMENT=.staging env-cmd -f .env.staging next build",
+    "build:production": "ENVIRONMENT=.production env-cmd -f .env.production next build",
+    "start": "next start",
+    "start:staging": "ENVIRONMENT=.staging env-cmd -f .env.staging next start",
+    "start:production": "ENVIRONMENT=.production env-cmd -f .env.production next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@babel/runtime": "^7.18.9",
+    "@emotion/react": "^11.10.0",
+    "@emotion/styled": "^11.10.0",
+    "@fontsource/roboto": "^4.5.7",
+    "@mui/icons-material": "^5.8.4",
+    "@mui/material": "^5.9.2",
+    "@mui/system": "^5.9.2",
+    "@mui/x-date-pickers": "^5.0.0-beta.3",
+    "axios": "^0.27.2",
+    "crypto": "^1.0.1",
+    "dayjs": "^1.11.4",
+    "dotenv": "^16.0.1",
+    "env-cmd": "^10.1.0",
+    "jwt-decode": "^3.1.2",
+    "lodash": "^4.17.21",
+    "next": "^14.0.2",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "react-hot-toast": "^2.3.0",
+    "react-redux": "^8.0.2",
+    "redux": "^4.2.0",
+    "redux-devtools-extension": "^2.13.9",
+    "redux-thunk": "^2.4.1",
+    "sharp": "^0.30.7",
+    "uuid": "^9.0.0"
+  },
+  "devDependencies": {
+    "eslint": "8.20.0",
+    "eslint-config-next": "12.2.3"
+  }
+}
