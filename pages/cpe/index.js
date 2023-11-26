@@ -76,9 +76,10 @@ function factoryclassification() {
       <Grid container justifyContent="space-between">
         <Grid item xs={4}>
           <Typography variant="h5" sx={{ fontWeight: 600, mt: 0.5 }}>
-            CVE FILTERING
+            CPE FILTERING
           </Typography>
         </Grid>
+
       </Grid>
 
       <Divider sx={{ my: 2 }} />
@@ -100,14 +101,14 @@ function factoryclassification() {
               
               >
                   <Box>
-                  <Typography sx={{ fontWeight: 600, fontSize:'20px' }}>CVE ID</Typography>
+                  <Typography sx={{ fontWeight: 600, fontSize:'20px' }}>Vendor</Typography>
                   </Box>
                   
                 
 
                   <Grid item xs={10} >
                   <TextField
-                  placeholder="Insert CVE ID"
+                  placeholder="Insert Vendor"
                       required
                       id="outlined-required"
                       fullWidth
@@ -120,89 +121,106 @@ function factoryclassification() {
               </Grid>
 
               <Grid
-              container
-              item
-              sx={{
-                // boxShadow: '0px 2px 10px rgba(0, 0, 0, 0.05)',
-                // borderRadius: '8px',
-                overflow: 'hidden',
-                padding:'20px',
-            }}
-              justifyContent={"space-between"}
-            
-            >
-                <Box>
-                <Typography sx={{ fontWeight: 600 ,fontSize:'20px'}}>Dates</Typography>
-                </Box>
+                container
+                item
+                sx={{
+                  // boxShadow: '0px 2px 10px rgba(0, 0, 0, 0.05)',
+                  // borderRadius: '8px',
+                  overflow: 'hidden',
+                  padding:'20px',
                 
+              }}
+                justifyContent={"space-between"}
+              //  spacing={2}
               
+              >
+                  <Box>
+                  <Typography sx={{ fontWeight: 600, fontSize:'20px' }}>Product</Typography>
+                  </Box>
+                  
 
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <Grid container xs={10}  justifyContent={'space-between'}>
-                    <Grid item xs={5.5} >
-                      <DatePicker
-                        label="Start Date"
-                        value={startDate}
-                        onChange={handleStartDateChange}
-                        maxDate={today}
-                        renderInput={(params) => (
-                          <TextField {...params} size="small" fullWidth/>
-                        )}
-                        
-                      />
-                    </Grid >
-                    <Grid  item xs={5.5}>
-                      <DatePicker
-                        label="End Date"
-                        value={endDate}
-                        onChange={handleEndDateChange}
-                        maxDate={today}
-                        renderInput={(params) => (
-                          <TextField {...params} size="small" fullWidth/>
-                        )}
-                        sx={{ width: '100%' }}
-                      />
-                    </Grid>
+                  <Grid item xs={10} >
+                  <TextField
+                  placeholder="Insert Product"
+                      required
+                      id="outlined-required"
+                      fullWidth
+                      size="small"
+                    renderInput={(params) => (
+                      <TextField {...params} size="small" />
+                    )}
+                  />
                   </Grid>
-                </LocalizationProvider>
-            </Grid>
+              </Grid>
 
-            <Grid
-              container
-              item
-              
-              sx={{
-                // boxShadow: '0px 2px 10px rgba(0, 0, 0, 0.05)',
-                // borderRadius: '8px',
-                overflow: 'hidden',
-                padding:'20px',
-            }}
-              justifyContent={"space-between"}
-            
-            >
-
-                <Box>
-                <Typography sx={{ fontWeight: 600, fontSize:'20px' }}>CVSS</Typography>
-                </Box>
+              <Grid
+                container
+                item
+                sx={{
+                  // boxShadow: '0px 2px 10px rgba(0, 0, 0, 0.05)',
+                  // borderRadius: '8px',
+                  overflow: 'hidden',
+                  padding:'20px',
                 
+              }}
+                justifyContent={"space-between"}
+              //  spacing={2}
               
+              >
+                  <Box>
+                  <Typography sx={{ fontWeight: 600, fontSize:'20px' }}>Version</Typography>
+                  </Box>
+                  
 
-                <Grid item xs={10} >
-                <Autocomplete
-           
-                  options={options}
-                  sx={{ backgroundColor: "white", width: "100%",}}
-                  size="small"
-                  fullWidth
-                 
-                  renderInput={(params) => (
-                    <TextField {...params} size="small"  placeholder="Low"    />
-                  )}
-                />
-                </Grid>
+                  <Grid item xs={10} >
+                  <TextField
+                  placeholder="Insert Version"
+                      required
+                      id="outlined-required"
+                      fullWidth
+                      size="small"
+                    renderInput={(params) => (
+                      <TextField {...params} size="small" />
+                    )}
+                  />
+                  </Grid>
+              </Grid>
+
+              <Grid
+                container
+                item
+                sx={{
+                  // boxShadow: '0px 2px 10px rgba(0, 0, 0, 0.05)',
+                  // borderRadius: '8px',
+                  overflow: 'hidden',
+                  padding:'20px',
                 
-            
-            </Grid>
+              }}
+                justifyContent={"space-between"}
+              //  spacing={2}
+              
+              >
+                  <Box>
+                  <Typography sx={{ fontWeight: 600, fontSize:'20px' }}>Platform</Typography>
+                  </Box>
+                  
+
+                  <Grid item xs={10} >
+                  <TextField
+                  placeholder="Insert Platform"
+                      required
+                      id="outlined-required"
+                      fullWidth
+                      size="small"
+                    renderInput={(params) => (
+                      <TextField {...params} size="small" />
+                    )}
+                  />
+                  </Grid>
+              </Grid>
+
+                
+        
 
             <Grid
               container

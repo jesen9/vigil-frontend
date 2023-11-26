@@ -93,7 +93,7 @@ const Login = () => {
               <Stack component="form" spacing={2} noValidate>
                 <Box display={"flex"} justifyContent={"center"}>
                   <Image
-                    src={CenturyLogo}
+                    // src={CenturyLogo}
                     width={100}
                     height={100}
                     alt="login logo"

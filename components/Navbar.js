@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Box, IconButton, TextField } from "@mui/material";
+import { Box, IconButton, TextField, InputAdornment } from "@mui/material";
 import jwt_decode from "jwt-decode";
 
 import { setUser } from "../redux/actions/userAction";
@@ -55,26 +55,35 @@ const Navbar = () => {
     setNotifMenuIsOpen(false);
   }
 
+  
+
   return (
     <Box
       display={"flex"}
       justifyContent={"flex-end"}
       sx={{ width: "100%", background: "white", px: 2, py: 2, }}
     >
-        <TextField
-            id="outlined-search"
-            placeholder="Search"
-            type="search"
-            variant="outlined"
-            size="normal"
-            fullWidth
-            sx={{px: "10%"}}
-            InputProps={{
-              endAdornment: (
-                <SearchIcon/>
-              ),
-            }}
-          />
+
+
+     
+      <TextField
+        id="standard-search"
+        placeholder="Search keyword (vendor, product, cvss, etc.)"
+        type="search"
+        fullWidth
+        sx={{mx:'50px'}}
+        InputProps={{
+          disableUnderline: true,
+          startAdornment: (
+            <InputAdornment position="start">
+              <SearchIcon sx={{ color: "grey" }} />
+            </InputAdornment>
+          ),
+        }}
+      />
+ 
+
+
  
 
       <IconButton sx={{ display: 'flex', alignItems: 'center' }}>
