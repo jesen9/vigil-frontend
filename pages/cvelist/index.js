@@ -110,6 +110,16 @@ function factoryclassification() {
     setPage(0);
   };
 
+  React.useEffect(()=>{
+    const getData = async () =>{
+      const query = await fetch('http://localhost:8000/api/getcvelist?resultsPerPage=10');
+      const response = await query.json();
+      console.log('response from api', response);
+      console.log('ini fake data', cvelist);
+    }
+    getData();
+  },[]);
+
   return (
     <Box sx={{ width: "100%", p: 3 }}>
       <Grid container justifyContent="space-between">
