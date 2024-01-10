@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Box, IconButton, TextField, InputAdornment } from "@mui/material";
 import jwt_decode from "jwt-decode";
-
+import { useRouter } from 'next/router';
 import { setUser } from "../redux/actions/userAction";
 import { getToken } from "../utils/token";
 import SearchIcon from '@mui/icons-material/Search';
@@ -17,7 +17,7 @@ const Navbar = () => {
   const {
     user: { email },
   } = userReducer;
-
+  const router = useRouter();
   const [listNotification, setListNotification] = useState([
     {
       type: "info",
@@ -55,7 +55,51 @@ const Navbar = () => {
     setNotifMenuIsOpen(false);
   }
 
+  function searchValue() {
+    const searchBox = document.getElementById('keywordSearch');
+    searchBox.addEventListener('change', function handleChange(event) {
+      console.log('masok debug value search', event.target.value); // 👉️ get selected VALUE
+    
+      // 👇️ get selected VALUE even outside event handler
+      console.log(select.options[select.selectedIndex].value);
+    
+      // 👇️ get selected TEXT in or outside event handler
+      console.log(select.options[select.selectedIndex].text);
+    });
+  }
   
+  const [keyword, setKeyword] = React.useState([]);
+
+  // React.useEffect(() => {
+  //   const getCvelist = async () => {
+  //     const response = await fetch(`http://localhost:8000/api/getcvelist?keywordSearch=${keyword}&resultsPerPage=10&startIndex=0`);
+  //     const cvelist = await response.json();
+  //     setCvelist(cvelist);
+  //   }
+  //   getCvelist();
+  // }, []);
+  // console.log(cvelist, cvelist.length);
+
+  const handleSubmit = async (e) => {
+    console.log('masok ga sih');
+    e.preventDefault();
+    const response = await fetch(`http://localhost:8000/api/getcvelist?keywordSearch=${keyword}&resultsPerPage=10&startIndex=0`);
+    const cvelist = await response.json();
+    console.log(cvelist, cvelist.length);
+    router.push(`/cvelist`);
+    // gimana caranya kirim cvelist ke ../cvelist/index.js?
+  }
+
+  const handleKeyDownSearch = (event, keyword) => {
+    if (event.key === "Enter") {
+      handleSubmit(event);
+      console.log(keyword);
+    }
+  }
+
+  const verify = (e) => {
+    console.log('function works');
+  }
 
   return (
     <Box
@@ -67,10 +111,14 @@ const Navbar = () => {
 
      
       <TextField
-        id="standard-search"
+        id="keywordSearch"
+        name="keywordSearch"
         placeholder="Search keyword (vendor, product, cvss, etc.)"
         type="search"
+        value={keyword}
+        onChange={(e) => setKeyword(e.target.value)}
         fullWidth
+        onKeyDown={(e) => handleKeyDownSearch(e, e.target.value)}
         sx={{mx:'50px'}}
         InputProps={{
           disableUnderline: true,
@@ -86,10 +134,10 @@ const Navbar = () => {
 
  
 
-      <IconButton sx={{ display: 'flex', alignItems: 'center' }}>
+      {/* <IconButton sx={{ display: 'flex', alignItems: 'center' }}>
         <AccountCircleIcon sx={{ fontSize: 50 }} />
     
-      </IconButton>
+      </IconButton> */}
 
     </Box>
   );

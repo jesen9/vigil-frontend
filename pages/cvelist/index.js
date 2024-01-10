@@ -34,41 +34,6 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import dayjs, { Dayjs } from 'dayjs';
 import { color } from "@mui/system";
 
-const cvelist=[
-    {
-        cveid:'CVE-2014-9174',
-        description:'Cross-site scripting (XSS) vulnerability in the Google Analytics by Yoast (google-analytics-for-wordpress) plugin before 5.1.3 for WordPress allows remote attackers to inject arbitrary web script or HTML via the "Manually enter your UA code" (manual_ua_code_field) field in the General Settings.',
-        cweid:'CWE-79',
-        publishedat:' 2014-12-02 16:59:11',
-        updatedat:'2017-09-08 01:29:33',
-        cvssscore:'MEDIUM',
-    }, 
-    {
-        cveid:'CVE-2014-9174',
-        description:'Cross-site scripting (XSS) vulnerability in the Google Analytics by Yoast (google-analytics-for-wordpress) plugin before 5.1.3 for WordPress allows remote attackers to inject arbitrary web script or HTML via the "Manually enter your UA code" (manual_ua_code_field) field in the General Settings.',
-        cweid:'CWE-79',
-        publishedat:' 2014-12-02 16:59:11',
-        updatedat:'2017-09-08 01:29:33',
-        cvssscore:'MEDIUM',
-    },
-    {
-        cveid:'CVE-2014-9174',
-        description:'Cross-site scripting (XSS) vulnerability in the Google Analytics by Yoast (google-analytics-for-wordpress) plugin before 5.1.3 for WordPress allows remote attackers to inject arbitrary web script or HTML via the "Manually enter your UA code" (manual_ua_code_field) field in the General Settings.',
-        cweid:'CWE-79',
-        publishedat:' 2014-12-02 16:59:11',
-        updatedat:'2017-09-08 01:29:33',
-        cvssscore:'MEDIUM',
-    },
-    {
-        cveid:'CVE-2014-9174',
-        description:'Cross-site scripting (XSS) vulnerability in the Google Analytics by Yoast (google-analytics-for-wordpress) plugin before 5.1.3 for WordPress allows remote attackers to inject arbitrary web script or HTML via the "Manually enter your UA code" (manual_ua_code_field) field in the General Settings.',
-        cweid:'CWE-79',
-        publishedat:' 2014-12-02 16:59:11',
-        updatedat:'2017-09-08 01:29:33',
-        cvssscore:'MEDIUM',
-    },
-  ]
-
 
 function factoryclassification() {
     
@@ -110,15 +75,18 @@ function factoryclassification() {
     setPage(0);
   };
 
+  const [cvelist, setCvelist] = React.useState([]);
   React.useEffect(()=>{
     const getData = async () =>{
-      const query = await fetch('http://localhost:8000/api/getcvelist?resultsPerPage=10');
+      const query = await fetch('http://localhost:8000/api/getcvelist?resultsPerPage=10&startIndex=0');
       const response = await query.json();
-      console.log('response from api', response);
-      console.log('ini fake data', cvelist);
+      // console.log('response from api', response);
+      // console.log('ini fake data', cvelist);
+      setCvelist(response);
     }
     getData();
   },[]);
+  console.log(cvelist, cvelist.length);
 
   return (
     <Box sx={{ width: "100%", p: 3 }}>
@@ -134,7 +102,7 @@ function factoryclassification() {
        
         <Grid container justifyContent="space-between">
         <List sx={{ mb: 2 }} >
-        {cvelist.map(({ cveid, description, cweid, publishedat, updatedat, cvssscore }) => (
+        {cvelist.map(({ cveid, description, publishedat, updatedat, cvssscore }) => (
           <Paper elevation={3} sx={{ backgroundColor: 'white', mb: 2, padding: 2 }} key={cveid}>
             <ListItemButton  onClick={() => router.push(`/cvelist/${cveid}`)} >
               <ListItemText
@@ -148,9 +116,6 @@ function factoryclassification() {
             <Divider />
             <ListItem>
                 <Grid container spacing={2}>
-                <Grid item xs={12} md={6}>
-                    <ListItemText primary="CWE ID" secondary={cweid} />
-                </Grid>
                 <Grid item xs={12} md={6}>
                     <ListItemText primary="Published At" secondary={publishedat} />
                 </Grid>
