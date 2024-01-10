@@ -37,8 +37,14 @@ function factoryclassification() {
   const router = useRouter();
   const [startDate, setStartDate] = React.useState(null);
   const [endDate, setEndDate] = React.useState(null);
+  const [CVEID, setCVEID] = React.useState("");
+  const [cvss, setCvss] = React.useState("");
   const today = dayjs();
   const options = ['Low', 'Medium', 'High',];
+
+  const handleChange = (event, newValue) => {
+    setCvss(newValue);
+  };
 
   const handleStartDateChange = (newStartValue) => {
     setStartDate(newStartValue);
@@ -60,7 +66,14 @@ function factoryclassification() {
     }
   };
 
-
+  const handleClick = () => {
+    // const cveId = CVEID;
+    // const cvss = options;
+    const startdate = startDate.$d;
+    const enddate = endDate.$d;
+    console.log('param', CVEID, cvss, startdate, enddate);
+    router.push(`/cvelist?cveId=${encodeURIComponent(CVEID)}&cvss=${encodeURIComponent(options)}&startDate=${encodeURIComponent(startDate)}&endDate=${encodeURIComponent(endDate)}`);
+  };
   
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -112,6 +125,7 @@ function factoryclassification() {
                       id="outlined-required"
                       fullWidth
                       size="small"
+                      onChange={(e) => setCVEID(e.target.value)}
                     renderInput={(params) => (
                       <TextField {...params} size="small" />
                     )}
@@ -148,6 +162,7 @@ function factoryclassification() {
                         renderInput={(params) => (
                           <TextField {...params} size="small" fullWidth/>
                         )}
+                        format="DD-MM-YYYY"
                         
                       />
                     </Grid >
@@ -161,6 +176,7 @@ function factoryclassification() {
                           <TextField {...params} size="small" fullWidth/>
                         )}
                         sx={{ width: '100%' }}
+                        format="DD-MM-YYYY"
                       />
                     </Grid>
                   </Grid>
@@ -194,7 +210,7 @@ function factoryclassification() {
                   sx={{ backgroundColor: "white", width: "100%",}}
                   size="small"
                   fullWidth
-                 
+                  onChange={handleChange}
                   renderInput={(params) => (
                     <TextField {...params} size="small"  placeholder="Low"    />
                   )}
@@ -217,9 +233,9 @@ function factoryclassification() {
                   variant="contained"
                   size="large"  // Change 'Large' to 'large'
                   sx={{backgroundColor:'#8EB4F4'}}
-                  onClick={() => {
-                    router.push(`/cvelist`);
-                  }}
+                  onClick={
+                    handleClick
+                  }
                   startIcon={ <SearchIcon />}
                 >
                  

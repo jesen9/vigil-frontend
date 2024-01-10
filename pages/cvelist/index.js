@@ -36,14 +36,19 @@ import { color } from "@mui/system";
 
 
 function factoryclassification() {
-    
+  const router = useRouter();
+  const cveId = router.query.cveId;
+  const cvss = router.query.cvss;
+  const startDate = router.query.startDate;
+  const endDate = router.query.endDate;
   const [page, setPage] = React.useState(1);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
-  const router = useRouter();
-  const [startDate, setStartDate] = React.useState(null);
-  const [endDate, setEndDate] = React.useState(null);
+  // const [startDate, setStartDate] = React.useState(null);
+  // const [endDate, setEndDate] = React.useState(null);
   const today = dayjs();
   const options = ['Low', 'Medium', 'High',];
+
+  console.log('param', cveId, cvss, startDate, endDate)
 
 
   const handleStartDateChange = (newStartValue) => {
