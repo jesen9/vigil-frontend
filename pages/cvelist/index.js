@@ -37,10 +37,49 @@ import { color } from "@mui/system";
 
 function factoryclassification() {
   const router = useRouter();
-  const cveId = router.query.cveId;
-  const cvss = router.query.cvss;
-  const startDate = router.query.startDate;
-  const endDate = router.query.endDate;
+  // const cveId = router.query.cveId;
+  // const cvss = router.query.cvss;
+  // const startDate = router.query.startDate;
+  // const endDate = router.query.endDate;
+  const queries = {
+    cpename: router.query.cpename,
+    cveId: router.query.cveId,
+    cvssV3Metrics: router.query.cvssV3Metrics,
+    cvssV3Severity: router.query.cvssV3Severity,
+    cweId: router.query.cweId,
+    hasCertAlerts: router.query.hasCertAlerts,
+    hasCertNotes: router.query.hasCertNotes,
+    hasKev: router.query.hasKev,
+    hasOval: router.query.hasOval,
+    isVulnerable: router.query.isVulnerable,
+    keywordExactMatch: router.query.keywordExactMatch,
+    keywordSearch: router.query.keywordSearch,
+    virtualMatchString: router.query.virtualMatchString,
+    noRejected: router.query.noRejected,
+    resultsPerPage: router.query.resultsPerPage,
+    startIndex: router.query.startIndex,
+    sourceIdentifier: router.query.sourceIdentifier,
+  }
+  console.log('ini query router', router.query);
+  
+  /*const cpename = router.query.cpename ?? '';
+  const cveId = router.query.cveId ?? '';
+  const cvssV3Metrics = router.query.cvssV3Metrics ?? '';
+  const cvssV3Severity = router.query.cvssV3Severity ?? '';
+  const cweId = router.query.cweId ?? '';
+  const hasCertAlerts = router.query.hasCertAlerts ?? '';
+  const hasCertNotes = router.query.hasCertNotes ?? '';
+  const hasKev = router.query.hasKev ?? '';
+  const hasOval = router.query.hasOval ?? '';
+  const isVulnerable = router.query.isVulnerable ?? '';
+  const keywordExactMatch = router.query.keywordExactMatch ?? '';
+  const keywordSearch = router.query.keywordSearch ?? '';
+  const virtualMatchString = router.query.virtualMatchString ?? '';
+  const noRejected = router.query.noRejected ?? '';
+  const resultsPerPage = router.query.resultsPerPage ?? '';
+  const startIndex = router.query.startIndex ?? '';
+  const sourceIdentifier = router.query.sourceIdentifier ?? '';*/
+
   const [page, setPage] = React.useState(1);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   // const [startDate, setStartDate] = React.useState(null);
@@ -79,19 +118,29 @@ function factoryclassification() {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
+  console.log(Array.isArray(Array.from(router.query)));
+  console.log(Array.from(router.query));
 
   const [cvelist, setCvelist] = React.useState([]);
   React.useEffect(()=>{
     const getData = async () =>{
-      const query = await fetch('http://localhost:8000/api/getcvelist?resultsPerPage=10&startIndex=0');
+      // const query = await fetch(`http://localhost:8000/api/getcvelist?cpename=${cpename}&cveId=${cveId}&cvssV3Metrics=${cvssV3Metrics}&cvssV3Severity=${cvssV3Severity}&cweId=${cweId}&hasCertAlerts=${hasCertAlerts}&hasCertNotes=${hasCertNotes}&hasKev=${hasKev}&hasOval=${hasOval}&isVulnerable=${isVulnerable}&keywordExactMatch=${keywordExactMatch}&keywordSearch=${keywordSearch}&virtualMatchString=${virtualMatchString}&noRejected=${noRejected}&resultsPerPage=${resultsPerPage}&startIndex=${startIndex}&sourceIdentifier=${sourceIdentifier}`);
+      const query = await fetch(`http://localhost:8000/api/getcvelist?keywordSearch=${queries.keywordSearch}&resultsPerPage=10&startIndex=0`);
+      // Array.from(router.query).forEach(element => {
+      //   console.log('ini element', element);
+      // });
+
+      // console.log(`http://localhost:8000/api/getcvelist?cpename=${cpename}&cveId=${cveId}&cvssV3Metrics=${cvssV3Metrics}&cvssV3Severity=${cvssV3Severity}&cweId=${cweId}&hasCertAlerts=${hasCertAlerts}&hasCertNotes=${hasCertNotes}&hasKev=${hasKev}&hasOval=${hasOval}&isVulnerable=${isVulnerable}&keywordExactMatch=${keywordExactMatch}&keywordSearch=${keywordSearch}&virtualMatchString=${virtualMatchString}&noRejected=${noRejected}&resultsPerPage=${resultsPerPage}&startIndex=${startIndex}&sourceIdentifier=${sourceIdentifier}`);
       const response = await query.json();
       // console.log('response from api', response);
       // console.log('ini fake data', cvelist);
       setCvelist(response);
     }
     getData();
+    console.log('ni hasil cvelist', cvelist, cvelist.length);
   },[]);
-  console.log(cvelist, cvelist.length);
+
+  
 
   return (
     <Box sx={{ width: "100%", p: 3 }}>
