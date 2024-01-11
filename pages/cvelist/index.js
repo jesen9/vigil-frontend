@@ -159,20 +159,20 @@ const factoryclassification= () => {
             {/* ------------------------------------ MODAL LOADING ------------------------------------ */}
 
             <Modal open={isModalLoading} onClose={() => setIsModalLoading(false)}>
-        <ModalWrapper>
+        {/* <ModalWrapper> */}
           <Box
             sx={{
               display: "flex",
               flexDirection: "column",
               justifyContent: "center",
-              width: 750,
+              // width: 750,
               alignItems: "center",
               height: "100%",
             }}
           >
             <CircularProgress color="primary" size={50} thickness={4} />
           </Box>
-        </ModalWrapper>
+        {/* </ModalWrapper> */}
       </Modal>
       
     </Box>
