@@ -284,7 +284,7 @@ const Sidebar = () => {
           ))}
         </ListFooter>
       </div>
-      {/* <DrawerFooter>
+      <DrawerFooter>
         {sideBarOpen && (
           <Typography
             variant="body2"
@@ -309,7 +309,7 @@ const Sidebar = () => {
         >
           <DoubleArrowIcon />
         </IconButton>
-      </DrawerFooter> */}
+      </DrawerFooter>
     </Drawer>
   );
 };

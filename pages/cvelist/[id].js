@@ -62,7 +62,7 @@ const Comment = ({ username, date, content, onEdit, onDelete, onReply }) => {
   );
 };
 
-const cvelist=[
+const cvedetail=
     {
         cveid:'CVE-2014-9174',
         description:'Cross-site scripting (XSS) vulnerability in the Google Analytics by Yoast (google-analytics-for-wordpress) plugin before 5.1.3 for WordPress allows remote attackers to inject arbitrary web script or HTML via the "Manually enter your UA code" (manual_ua_code_field) field in the General Settings.',
@@ -71,29 +71,77 @@ const cvelist=[
         cwedescription: "The product does not neutralize or incorrectly neutralizes user-controllable input before it is placed in output that is used as a web page that is served to other users.",
         publishedat:' 2014-12-02 16:59:11',
         updatedat:'2017-09-08 01:29:33',
-        cvssscore:'MEDIUM',
-    }, 
-  ]
+        cvssscore:[
+          {
+            "version": "3.1",
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+            "attackVector": "NETWORK",
+            "attackComplexity": "LOW",
+            "privilegesRequired": "NONE",
+            "userInteraction": "NONE",
+            "scope": "UNCHANGED",
+            "confidentialityImpact": "HIGH",
+            "integrityImpact": "HIGH",
+            "availabilityImpact": "HIGH",
+            "baseScore": 9.8,
+            "baseSeverity": "CRITICAL",
+            "source": "nvd@nist.gov",
+            "type": "Primary",
+            "exploitabilityScore": 3.9,
+            "impactScore": 5.9
+          },
+          {
+              "version": "3.0",
+              "vectorString": "CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H",
+              "attackVector": "NETWORK",
+              "attackComplexity": "LOW",
+              "privilegesRequired": "NONE",
+              "userInteraction": "NONE",
+              "scope": "CHANGED",
+              "confidentialityImpact": "HIGH",
+              "integrityImpact": "HIGH",
+              "availabilityImpact": "HIGH",
+              "baseScore": 10,
+              "baseSeverity": "CRITICAL",
+              "source": "support@hackerone.com",
+              "type": "Secondary",
+              "exploitabilityScore": 3.9,
+              "impactScore": 6
+          }
+        ],
+        poc:[
+          {
+            "title": "POC Title 1",
+            "description": "Description for POC 1",
+            "link": "https://example.com/poc1",
+          },
+          {
+            "title": "POC Title 2",
+            "description": "Description for POC 2",
+            "link": "https://example.com/poc2"
+          },
+        ]
+    }
 
- const pocData =[
-    {
-      "title": "POC Title 1",
-      "description": "Description for POC 1",
-      "link": "https://example.com/poc1",
-      "comments": [
-        {
-          "username": "user1",
-          "date": "2023-01-01",
-          "content": "This is a sample comment for POC 1."
-        },
-      ]
-    },
-    {
-      "title": "POC Title 2",
-      "description": "Description for POC 2",
-      "link": "https://example.com/poc2"
-    },
-  ]
+//  const pocData =[
+//     {
+//       "title": "POC Title 1",
+//       "description": "Description for POC 1",
+//       "link": "https://example.com/poc1",
+//       "comments": [
+//         {
+//           "username": "user1",
+//           "date": "2023-01-01",
+//           "content": "This is a sample comment for POC 1."
+//         },
+//       ]
+//     },
+//     {
+//       "title": "POC Title 2",
+//       "description": "Description for POC 2",
+//       "link": "https://example.com/poc2"
+//     },
+//   ]
 
 
 function factoryclassification () {
@@ -145,6 +193,20 @@ function factoryclassification () {
     setPage(0);
   };
 
+  const cveid = router.query.id;
+
+  const [cvedetail, setCvedetail] = React.useState([]);
+  React.useEffect(()=>{
+    const getData = async () =>{
+      const query = await fetch(`http://localhost:8000/api/getcvedetails?cveId=${cveid}`);
+      const response = await query.json();
+      setCvedetail(response);
+    }
+    getData();
+    
+    console.log('ni hasil cvedetail', cvedetail, cvedetail.length);
+  },[]);
+  
   return (
     <Box sx={{ width: "100%", p: 3 }}>
        <Grid container justifyContent={"space-between"}>
@@ -163,33 +225,33 @@ function factoryclassification () {
       </Grid>
 
       <Divider sx={{ my: 2 }} />
-      {cvelist.map((cve, index) => (
+      {/* {cvedetail.map((cve, index) => ( */}
         <Grid container component={Paper} sx={{p:2, marginBottom:3}} justifyContent={'space-between'}  rowSpacing={1}>
           <Grid item  >
             <Typography variant="h4" sx={{ fontWeight: 600, mt: 0.5 }}>
-              {cve.cveid}
+              {cvedetail.cveid}
             </Typography>
             <Divider sx={{ my: 2 }} />
             <Typography variant="h6" sx={{ fontWeight: 400, mt: 0.5 }}>
-              {cve.description}
+              {cvedetail.description}
             </Typography>
             <Divider sx={{ my: 2 }} />
           </Grid>
           <Grid item xs={6}>
             <Typography variant="h6" sx={{ fontWeight: 300, mt: 0.5 }}>
-              Published At: {cve.publishedat}
+              Published At: {cvedetail.publishedat}
             </Typography>
           </Grid>
           <Grid item xs={6}>
             <Typography variant="h6" sx={{ fontWeight: 300, mt: 0.5 }}>
-              Updated At: {cve.updatedat}
+              Updated At: {cvedetail.updatedat}
             </Typography>
           </Grid>
         </Grid>
-      ))}
+      {/* ))} */}
       
 
-       {/* CVESS */}
+       {/* CVSS */}
 
        <Grid container  
        justifyContent={"space-between"}
@@ -220,28 +282,23 @@ function factoryclassification () {
                 Base Severity
               </TableCell>
             </TableHead>
-            <TableBody>
-              <TableRow>
               <TableBody>
-              {cvelist &&
-                cvelist.map((cveitem, index) => (
+              {cvedetail && cvedetail.cvssscore.map((cvss, index) => (
                   <TableRow key={index}>
                     <TableCell align="center">
-                      {/* {cvelist.version} */}
+                      {cvss.version}
                     </TableCell>
                     <TableCell align="center">
-                      {/* {cvelist.version_string} */}
+                      {cvss.vectorString}
                     </TableCell>
                     <TableCell align="center">
-                      {/* {cvelist.base_score} */}
+                      {cvss.baseScore}
                     </TableCell>
                     <TableCell align="center">
-                      {/* {cvelist.base_severity} */}
+                      {cvss.baseSeverity}
                     </TableCell>
                   </TableRow>
                 ))}
-            </TableBody>
-              </TableRow>
             </TableBody>
             </Table>
             </TableContainer>
@@ -265,7 +322,7 @@ function factoryclassification () {
            </Grid>
          </Grid>
          
-      {cvelist.map((cve, index) => (
+      {/* {cvedetail.map((cve, index) => (
            <Grid container  sx={{ p:2, marginBottom:3}} component={Paper} >
            <Grid item >
            <Typography variant="h6" sx={{ fontWeight: 400, mt: 0.5 }}>
@@ -277,7 +334,7 @@ function factoryclassification () {
              </Typography>
            </Grid>
          </Grid>
-      ))}
+      ))} */}
 
       
       {/* CPE*/}
@@ -305,22 +362,17 @@ function factoryclassification () {
                 Version 
               </TableCell>
             </TableHead>
-            <TableBody>
-              <TableRow>
               <TableBody>
-              {cvelist &&
-                cvelist.map((cveitem, index) => (
+              {cvedetail && cvedetail.map((cveitem, index) => (
                   <TableRow key={index}>
                     <TableCell align="center">
-                      {/* {cvelist.version} */}
+                      {/* {cvedetail.version} */}
                     </TableCell>
                     <TableCell align="center">
-                      {/* {cvelist.version_string} */}
+                      {/* {cvedetail.version_string} */}
                     </TableCell>
                   </TableRow>
                 ))}
-            </TableBody>
-              </TableRow>
             </TableBody>
             </Table>
             </TableContainer>
@@ -343,7 +395,7 @@ function factoryclassification () {
           </Grid>
 
           
-          {pocData.map((poc, index) => (
+          {cvedetail.poc.map((poc, index) => (
             <Card sx={{ borderRadius: 3, mb: 3 }}>
              
                 <CardContent sx={{ overflow: "auto" }}>
