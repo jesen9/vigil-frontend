@@ -62,54 +62,66 @@ const Comment = ({ username, date, content, onEdit, onDelete, onReply }) => {
   );
 };
 
-// const cvedetail=
-//     {
-//         cveid:'CVE-2014-9174',
-//         description:'Cross-site scripting (XSS) vulnerability in the Google Analytics by Yoast (google-analytics-for-wordpress) plugin before 5.1.3 for WordPress allows remote attackers to inject arbitrary web script or HTML via the "Manually enter your UA code" (manual_ua_code_field) field in the General Settings.',
-//         cweid:'CWE-79',
-//         cwename: "Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting')",
-//         cwedescription: "The product does not neutralize or incorrectly neutralizes user-controllable input before it is placed in output that is used as a web page that is served to other users.",
-//         publishedat:' 2014-12-02 16:59:11',
-//         updatedat:'2017-09-08 01:29:33',
-//         cvssscore:[
-//           {
-//             "version": "3.1",
-//             "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
-//             "attackVector": "NETWORK",
-//             "attackComplexity": "LOW",
-//             "privilegesRequired": "NONE",
-//             "userInteraction": "NONE",
-//             "scope": "UNCHANGED",
-//             "confidentialityImpact": "HIGH",
-//             "integrityImpact": "HIGH",
-//             "availabilityImpact": "HIGH",
-//             "baseScore": 9.8,
-//             "baseSeverity": "CRITICAL",
-//             "source": "nvd@nist.gov",
-//             "type": "Primary",
-//             "exploitabilityScore": 3.9,
-//             "impactScore": 5.9
-//           },
-//           {
-//               "version": "3.0",
-//               "vectorString": "CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H",
-//               "attackVector": "NETWORK",
-//               "attackComplexity": "LOW",
-//               "privilegesRequired": "NONE",
-//               "userInteraction": "NONE",
-//               "scope": "CHANGED",
-//               "confidentialityImpact": "HIGH",
-//               "integrityImpact": "HIGH",
-//               "availabilityImpact": "HIGH",
-//               "baseScore": 10,
-//               "baseSeverity": "CRITICAL",
-//               "source": "support@hackerone.com",
-//               "type": "Secondary",
-//               "exploitabilityScore": 3.9,
-//               "impactScore": 6
-//           }
-//         ],
-//     }
+const cvedetail=
+    {
+        cveid:'CVE-2014-9174',
+        description:'Cross-site scripting (XSS) vulnerability in the Google Analytics by Yoast (google-analytics-for-wordpress) plugin before 5.1.3 for WordPress allows remote attackers to inject arbitrary web script or HTML via the "Manually enter your UA code" (manual_ua_code_field) field in the General Settings.',
+        cweid:'CWE-79',
+        cwename: "Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting')",
+        cwedescription: "The product does not neutralize or incorrectly neutralizes user-controllable input before it is placed in output that is used as a web page that is served to other users.",
+        publishedat:' 2014-12-02 16:59:11',
+        updatedat:'2017-09-08 01:29:33',
+        cvssscore:[
+          {
+            "version": "3.1",
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+            "attackVector": "NETWORK",
+            "attackComplexity": "LOW",
+            "privilegesRequired": "NONE",
+            "userInteraction": "NONE",
+            "scope": "UNCHANGED",
+            "confidentialityImpact": "HIGH",
+            "integrityImpact": "HIGH",
+            "availabilityImpact": "HIGH",
+            "baseScore": 9.8,
+            "baseSeverity": "CRITICAL",
+            "source": "nvd@nist.gov",
+            "type": "Primary",
+            "exploitabilityScore": 3.9,
+            "impactScore": 5.9
+          },
+          {
+              "version": "3.0",
+              "vectorString": "CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H",
+              "attackVector": "NETWORK",
+              "attackComplexity": "LOW",
+              "privilegesRequired": "NONE",
+              "userInteraction": "NONE",
+              "scope": "CHANGED",
+              "confidentialityImpact": "HIGH",
+              "integrityImpact": "HIGH",
+              "availabilityImpact": "HIGH",
+              "baseScore": 10,
+              "baseSeverity": "CRITICAL",
+              "source": "support@hackerone.com",
+              "type": "Secondary",
+              "exploitabilityScore": 3.9,
+              "impactScore": 6
+          }
+        ],
+        poc:[
+          {
+            "title": "POC Title 1",
+            "description": "Description for POC 1",
+            "link": "https://example.com/poc1",
+          },
+          {
+            "title": "POC Title 2",
+            "description": "Description for POC 2",
+            "link": "https://example.com/poc2"
+          },
+        ]
+    }
 
 //  const pocData =[
 //     {
@@ -350,12 +362,9 @@ function factoryclassification () {
                 Version 
               </TableCell>
             </TableHead>
-            <TableBody>
-              <TableRow>
               <TableBody>
+              {cvedetail && cvedetail.map((cveitem, index) => (
                   <TableRow key={index}>
-              {/* {cvedetail && */}
-                {/* cvedetail.map((cveitem, index) => ( */}
                     <TableCell align="center">
                       {/* {cvedetail.version} */}
                     </TableCell>
@@ -363,9 +372,7 @@ function factoryclassification () {
                       {/* {cvedetail.version_string} */}
                     </TableCell>
                   </TableRow>
-                {/* ))} */}
-            </TableBody>
-              </TableRow>
+                ))}
             </TableBody>
             </Table>
             </TableContainer>
