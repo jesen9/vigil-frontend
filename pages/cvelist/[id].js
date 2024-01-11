@@ -395,15 +395,15 @@ function factoryclassification () {
           </Grid>
 
           
-          {/* {cvedetail.poc.map((poc, index) => ( */}
+          {cvedetail.poc.map((poc, index) => (
             <Card sx={{ borderRadius: 3, mb: 3 }}>
              
                 <CardContent sx={{ overflow: "auto" }}>
                   <Typography variant="h5" component="div">
-                    {/* {poc.title} */}
+                    {poc.title}
                   </Typography>
                   <Typography variant="body2" color="text.secondary" sx={{border:'1px solid grey', p:1}}>
-                    {/* {poc.description} */}
+                    {poc.description}
                   </Typography>
                   
                   <Link href={poc.link} target="_blank" rel="noopener noreferrer">
@@ -411,7 +411,7 @@ function factoryclassification () {
                   </Link>
                 </CardContent>
             </Card>
-          {/* ))} */}
+          ))}
          
         
 
