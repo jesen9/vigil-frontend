@@ -48,7 +48,7 @@ function factoryclassification() {
   const today = dayjs();
   const options = ['Low', 'Medium', 'High',];
 
-  console.log('param', cveId, cvss, startDate, endDate)
+  console.log('cvelist param', cveId, cvss, startDate, endDate)
 
 
   const handleStartDateChange = (newStartValue) => {
