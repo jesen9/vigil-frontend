@@ -1,3 +1,4 @@
+import * as React from "react";
 import {
   Box,
   Grid,
@@ -6,31 +7,21 @@ import {
   TableCell,
   TableContainer,
   TableHead,
+  TablePagination, // Import TablePagination
   Typography,
-  TableBody,
   TextField,
-  IconButton,
   Button,
   Paper,
   Divider,
-  TableFooter,
-  TablePagination,
-  Badge,
-  Modal,
-  Autocomplete,
   Stack,
-  FAB,
-  Alert,
-  Chip,
-  AlertTitle,
-  CircularProgress,
-  Pagination,
+  Autocomplete,
   List,
+  ListItem,
+  ListItemText,
+  ListItemButton,
+  Pagination,
 } from "@mui/material";
-import { debounce, result } from "lodash";
-import React, { useCallback, useEffect, useState } from "react";
-import ModalWrapper from "../../components/ModalWrapper";
-import ModalInputWrapper from "../../components/ModalInputWrapper";
+import { debounce } from "lodash";
 import { useRouter } from 'next/router';
 import api from "../../services/api"
 import AddIcon from "@mui/icons-material/Add";
@@ -43,22 +34,18 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import dayjs, { Dayjs } from 'dayjs';
 import { color } from "@mui/system";
-import useToast from "../../utils/toast";
 
 
-const factoryclassification= () => {
+function factoryclassification() {
   const router = useRouter();
-  const [displayToast] = useToast();
-  const [isModalLoading, setIsModalLoading] = useState(false);
-  const [open, setOpen] = React.useState(false);
   const [cvelist, setCvelist] = React.useState([]);
   const cveId = router.query.cveId 
   const cvssV3Severity = router.query.cvss
   const cweId = router.query.cweId 
   const pubStartDate = router.query.startdate
   const pubEndDate = router.query.enddate
-  const [startIndex, setStartIndex] = React.useState(1);
-  const [resultsPerPage, setResultPerPage] = React.useState(5);
+  const [page, setPage] = React.useState(1);
+  const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
   const debounceMountCVEList = useCallback(
     debounce(mountCVEList, 400),
@@ -69,20 +56,38 @@ const factoryclassification= () => {
     setStartDate(newStartValue);
   };
 
-  console.log("router query", router.query);
-
-  async function mountCVEList(params, resultsPerPage, startIndex) {
+  async function mountCVEList() {
     try {
+        const queryParams = {
+            cpename,
+            cveId,
+            cvssV3Metrics,
+            cvssV3Severity,
+            cweId,
+            hasCertAlerts,
+            hasCertNotes,
+            hasKev,
+            hasOval,
+            isVulnerable,
+            keywordExactMatch,
+            keywordSearch,
+            virtualMatchString,
+            noRejected,
+            resultsPerPage,
+            startIndex,
+            sourceIdentifier,
+          };
 
       setIsModalLoading(true);
 
       const filteredParams = Object.fromEntries(
-        Object.entries(params).filter(([key, value]) => value !== undefined && value !== null && value !== "null")
+        Object.entries(queryParams).filter(([key, value]) => value !== undefined && value !== null)
       );
-      
-      console.log("filteredParams", filteredParams)
-      const getcveList = await api.getCVEList(filteredParams, resultsPerPage, startIndex);
-      const { data } = getcveList;
+
+      const queryString = new URLSearchParams(filteredParams).toString();
+
+      const getcveList = await api.getCVEList(queryString)
+      const { data } = getAllProcessType;
       console.log('data', data)
       setCvelist(data.data)
       setIsModalLoading(false);
@@ -93,17 +98,6 @@ const factoryclassification= () => {
       console.log(error);
     }
   }
-
-  useEffect(() => {
-    if (!router.isReady) return;
-    debounceMountCVEList(router.query, resultsPerPage, startIndex);
-    const cveId = router.query.cveId 
-    const cvssV3Severity = router.query.cvss
-    const cweId = router.query.cweId 
-    const pubStartDate = router.query.startdate
-    const pubEndDate = router.query.enddate
-  }, [router.isReady]);
-
 
   return (
     <Box sx={{ width: "100%", p: 3 }}>
@@ -151,29 +145,10 @@ const factoryclassification= () => {
 
     </Grid>
     <Stack spacing={2} alignItems={'center'}>
-      <Pagination count={10} page={startIndex}  color="primary" size="large" />
+      <Pagination count={10} page={page}  color="primary" size="large" />
      
     </Stack>
       <Divider sx={{ my: 2 }} />
-
-            {/* ------------------------------------ MODAL LOADING ------------------------------------ */}
-
-            <Modal open={isModalLoading} onClose={() => setIsModalLoading(false)}>
-        <ModalWrapper>
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
-              width: 750,
-              alignItems: "center",
-              height: "100%",
-            }}
-          >
-            <CircularProgress color="primary" size={50} thickness={4} />
-          </Box>
-        </ModalWrapper>
-      </Modal>
       
     </Box>
   );

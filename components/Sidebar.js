@@ -15,7 +15,8 @@ import {
 import { styled, useTheme } from "@mui/material/styles";
 import MuiDrawer from "@mui/material/Drawer";
 import DoubleArrowIcon from "@mui/icons-material/DoubleArrow";
-import CenturyLogo from "../public/static/logo/century.png";
+import CenturyLogo from "../public/static/logo/century.png"
+import VigilLogo from "../public/static/logo/vigil.png";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import { useRouter } from "next/router";
@@ -143,7 +144,7 @@ const Sidebar = () => {
           sx={{
             minHeight: 48,
             justifyContent:  "initial",
-            // justifyContent: sideBarOpen ? "initial" : "center",
+            justifyContent: sideBarOpen ? "initial" : "center",
             px: 2.5,
           }}
         >
@@ -244,36 +245,44 @@ const Sidebar = () => {
       PaperProps={{
         sx: {
           bgcolor: "#8EB4F4",
-          transition: (theme) =>
-            theme.transitions.create("background-color", {
-              easing: theme.transitions.easing.easeOut,
-              duration: theme.transitions.duration.enteringScreen,
-            }),
+          // transition: (theme) =>
+          //   theme.transitions.create("background-color", {
+          //     easing: theme.transitions.easing.easeOut,
+          //     duration: theme.transitions.duration.enteringScreen,
+          //   }),
         },
       }}
     >
-      <DrawerHeader sx={{ py: 3, px: 0 }}>
+      
+      <DrawerHeader sx={{ py: 3, px: 0, }}>
         <Box
           sx={{
             width: "60px",
             height: "60px",
-            transform: sideBarOpen ? "scale(1)" : "scale(0.6)",
-            transition: (theme) =>
-              theme.transitions.create("transform", {
-                easing: theme.transitions.easing.easeOut,
-                duration: theme.transitions.duration.complex,
-              }),
-            textAlign: "center",
+            // transform: sideBarOpen ? "scale(1)" : "scale(0.6)",
+            // transition: (theme) =>
+            //   theme.transitions.create("transform", {
+            //     easing: theme.transitions.easing.easeOut,
+            //     duration: theme.transitions.duration.complex,
+            //   }),
+            
+            border: "1px solid black",
+            
           }}
         >
-          {/* <Image
-            src={CenturyLogo}
+          <Image
+            src={VigilLogo}
             width="100%"
             height="100%"
+            // layout="fill" 
             alt="Sidebar Logo"
-          /> */}
+            
+          />
+          
         </Box>
+       
       </DrawerHeader>
+
       <div>
         {Routes.map((item, key) => (
           <MenuItem key={key} item={item} />

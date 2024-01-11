@@ -37,8 +37,8 @@ function factoryclassification() {
   const router = useRouter();
   const [startDate, setStartDate] = React.useState(null);
   const [endDate, setEndDate] = React.useState(null);
-  const [CVEID, setCVEID] = React.useState("");
-  const [cvss, setCvss] = React.useState("");
+  const [CVEID, setCVEID] = React.useState(null);
+  const [cvss, setCvss] = React.useState(null);
   const today = dayjs();
   const options = ['Low', 'Medium', 'High',];
 
@@ -67,13 +67,22 @@ function factoryclassification() {
   };
 
   const handleClick = () => {
-    // const cveId = CVEID;
-    // const cvss = options;
-    const startdate = startDate.$d;
-    const enddate = endDate.$d;
-    console.log('param', CVEID, cvss, startdate, enddate);
-    router.push(`/cvelist?cveId=${encodeURIComponent(CVEID)}&cvss=${encodeURIComponent(options)}&startDate=${encodeURIComponent(startDate)}&endDate=${encodeURIComponent(endDate)}`);
+    const formatDate = (date) => date && date.$d.toISOString();
+  
+    const queryParams = [
+      CVEID !== null && `cveId=${encodeURIComponent(CVEID)}`,
+      cvss !== null && `cvssV3Severity=${encodeURIComponent(cvss)}`,
+      formatDate(startDate) && `startDate=${encodeURIComponent(formatDate(startDate))}`,
+      formatDate(endDate) && `endDate=${encodeURIComponent(formatDate(endDate))}`,
+    ].filter(Boolean).join('&');
+  
+    const url = `/cvelist${queryParams ? `?${queryParams}` : ''}`;
+  
+    console.log('param', CVEID, cvss, startDate, endDate);
+    router.push(url);
   };
+  
+  
   
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
