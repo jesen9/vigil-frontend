@@ -1,4 +1,3 @@
-import * as React from "react";
 import {
   Box,
   Grid,
@@ -15,7 +14,12 @@ import {
   Divider,
   Stack,
   Autocomplete,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
 } from "@mui/material";
+import React, { useCallback, useEffect, useState } from "react";
 import { debounce } from "lodash";
 import { useRouter } from 'next/router';
 import AddIcon from "@mui/icons-material/Add";
@@ -30,7 +34,6 @@ import dayjs, { Dayjs } from 'dayjs';
 import { color } from "@mui/system";
 
 
-
 function factoryclassification() {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
@@ -39,11 +42,47 @@ function factoryclassification() {
   const [endDate, setEndDate] = React.useState(null);
   const [CVEID, setCVEID] = React.useState(null);
   const [cvss, setCvss] = React.useState(null);
+  const [cvssV2, setCvssV2] = React.useState(null);
+  const [cvssV3, setCvssV3] = React.useState(null);
   const today = dayjs();
-  const options = ['Low', 'Medium', 'High',];
+  const cvssVersion = ['cvssV2', 'cvssV3'];
+ 
+ 
+  const [selectedVersion, setSelectedVersion] = useState("");
+  const [cvssOptions, setCvssOptions] = useState([]);
 
-  const handleChange = (event, newValue) => {
+
+  const handleVersionChange = (event) => {
+    const version = event.target.value;
+    setSelectedVersion(version);
+  
+    const newCvssOptions = getOptionsForVersion(version);
+
+    setCvssOptions(newCvssOptions);
+  };
+
+  // console.log("halo", selectedVersion, cvss);
+
+  const handleCvssChange = (event) => {
+    const newValue = event.target.value;
     setCvss(newValue);
+    if (selectedVersion === "cvssV2") {
+      setCvssV2(newValue);
+    }
+    else
+      setCvssV3(newValue);
+    // Handle the change of cvss value here
+  };
+
+  const getOptionsForVersion = (version) => {
+    // Example logic, replace with your implementation
+    if (version === "cvssV2") {
+      return ["LOW", "MEDIUM", "HIGH"];
+    } else if (version === "cvssV3") {
+      return ["LOW", "MEDIUM", "HIGH", "CRITICAL"];
+    } else {
+      return []; // Default or handle other cases
+    }
   };
 
   const handleStartDateChange = (newStartValue) => {
@@ -71,7 +110,8 @@ function factoryclassification() {
   
     const queryParams = [
       CVEID !== null && `cveId=${encodeURIComponent(CVEID)}`,
-      cvss !== null && `cvssV3Severity=${encodeURIComponent(cvss)}`,
+      cvssV2 !== null && `cvssV2Severity=${encodeURIComponent(cvssV2)}`,
+      cvssV3 !== null && `cvssV3Severity=${encodeURIComponent(cvssV3)}`,
       formatDate(startDate) && `startDate=${encodeURIComponent(formatDate(startDate))}`,
       formatDate(endDate) && `endDate=${encodeURIComponent(formatDate(endDate))}`,
     ].filter(Boolean).join('&');
@@ -210,21 +250,45 @@ function factoryclassification() {
                 <Typography sx={{ fontWeight: 600, fontSize:'20px' }}>CVSS</Typography>
                 </Box>
                 
-              
+                <Grid container xs={10}  justifyContent={'space-between'}>
+                  <Grid item xs={5.5} >
+                  <FormControl fullWidth>
+                  <InputLabel id="version">Version</InputLabel>
+                    <Select
+                      labelId="version-label"
+                      id="version"
+                      value={selectedVersion}
+                      onChange={handleVersionChange}
+                      // label="Select Version"
+                    >
+                      <MenuItem value="cvssV2">cvssV2</MenuItem>
+                      <MenuItem value="cvssV3">cvssV3</MenuItem>
+                      {/* Add other version options as needed */}
+                    </Select>
+                  </FormControl>
+                 
+                  </Grid>
 
-                <Grid item xs={10} >
-                <Autocomplete
-           
-                  options={options}
-                  sx={{ backgroundColor: "white", width: "100%",}}
-                  size="small"
-                  fullWidth
-                  onChange={handleChange}
-                  renderInput={(params) => (
-                    <TextField {...params} size="small"  placeholder="Low"    />
-                  )}
-                />
+                  <Grid item xs={5.5} >
+                  <FormControl fullWidth>
+                  <InputLabel id="cvss">Severity</InputLabel>
+                    <Select
+                      labelId="cvss-label"
+                      id="cvss"
+                      value={cvss}
+                      onChange={handleCvssChange}
+                    >
+                      {cvssOptions.map((option) => (
+                        <MenuItem key={option} value={option}>
+                          {option}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                  </Grid>
                 </Grid>
+
+               
                 
             
             </Grid>
