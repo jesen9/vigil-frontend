@@ -260,14 +260,15 @@ function factoryclassification() {
                 
                 <Grid container xs={10}  justifyContent={'space-between'}>
                   <Grid item xs={5.5} >
-                  <FormControl fullWidth>
-                  <InputLabel id="version">Version</InputLabel>
+                  <FormControl fullWidth size="small">
+                  <InputLabel id="cvss">Version</InputLabel>
                     <Select
                       labelId="version-label"
                       id="version"
                       value={selectedVersion}
                       onChange={handleVersionChange}
-                      disabled={CVEID !== null && CVEID !== ""}  
+                      
+                      disabled={CVEID !== null && CVEID !== ""}
                       // label="Select Version"
                     >
                       <MenuItem value="cvssV2">cvssV2</MenuItem>
@@ -279,13 +280,15 @@ function factoryclassification() {
                   </Grid>
 
                   <Grid item xs={5.5} >
-                  <FormControl fullWidth>
+                  <FormControl fullWidth size="small">
                   <InputLabel id="cvss">Severity</InputLabel>
                     <Select
                       labelId="cvss-label"
                       id="cvss"
                       value={cvss}
                       onChange={handleCvssChange}
+                      
+                     
                       disabled={CVEID !== null && CVEID !== ""}  
                     >
                       {cvssOptions.map((option) => (

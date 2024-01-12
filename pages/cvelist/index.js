@@ -101,6 +101,7 @@ const factoryclassification= () => {
   console.log("totalResult", totalResult)
 
   useEffect(() => {
+    console.log("halo gais")
     if (!router.isReady) return;
     debounceMountCVEList(router.query, resultsPerPage, startIndex);
   }, [router.isReady]);

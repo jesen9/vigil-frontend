@@ -93,12 +93,17 @@ const Navbar = () => {
   const handleKeyDownSearch = (event, keyword) => {
     if (event.key === "Enter") {
       if (router.pathname === "/cvelist") {
+        console.log("aaaa")
         router.replace(`/cvelist?keywordSearch=${keyword}`);
-        window.location.reload();
+        setTimeout(() => {
+          router.reload(); // Reload the page
+        }, 200);  
+      }
+      else{
+        console.log('ni keyword', keyword);
+        router.push(`/cvelist?keywordSearch=${keyword}`);
       }
       // handleSubmit(event);
-      console.log('ni keyword', keyword);
-      router.push(`/cvelist?keywordSearch=${keyword}`);
     }
   }
 
