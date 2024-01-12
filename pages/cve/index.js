@@ -208,6 +208,7 @@ function factoryclassification() {
                         value={startDate}
                         onChange={handleStartDateChange}
                         maxDate={today}
+                        disabled={CVEID !== null}  
                         renderInput={(params) => (
                           <TextField {...params} size="small" fullWidth/>
                         )}
@@ -221,6 +222,7 @@ function factoryclassification() {
                         value={endDate}
                         onChange={handleEndDateChange}
                         maxDate={today}
+                        disabled={CVEID !== null}  
                         renderInput={(params) => (
                           <TextField {...params} size="small" fullWidth/>
                         )}
@@ -259,6 +261,7 @@ function factoryclassification() {
                       id="version"
                       value={selectedVersion}
                       onChange={handleVersionChange}
+                      disabled={CVEID !== null}  
                       // label="Select Version"
                     >
                       <MenuItem value="cvssV2">cvssV2</MenuItem>
@@ -277,6 +280,7 @@ function factoryclassification() {
                       id="cvss"
                       value={cvss}
                       onChange={handleCvssChange}
+                      disabled={CVEID !== null}  
                     >
                       {cvssOptions.map((option) => (
                         <MenuItem key={option} value={option}>
