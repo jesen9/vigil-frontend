@@ -93,7 +93,7 @@ function factoryclassification() {
     if (startDate) {
       const maxEndDate = dayjs(startDate).add(120, 'days');
       if (dayjs(newStopValue).isAfter(maxEndDate)) {
-        // If the selected EndDate is more than 30 days from startDate, reset it
+        // If the selected EndDate is more than 120 days from startDate, reset it
         setEndDate(null);
         alert('The range between start date and stop date should not be more than 120 days.');
       } else {
