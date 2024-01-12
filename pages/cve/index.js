@@ -107,13 +107,18 @@ function factoryclassification() {
 
   const handleClick = () => {
     const formatDate = (date) => date && date.$d.toISOString();
+
+    if ((!startDate && endDate) || (startDate && !endDate)) {
+      alert('Please enter both start date and end date');
+      return;
+    }
   
     const queryParams = [
       CVEID !== null && `cveId=${encodeURIComponent(CVEID)}`,
       cvssV2 !== null && `cvssV2Severity=${encodeURIComponent(cvssV2)}`,
       cvssV3 !== null && `cvssV3Severity=${encodeURIComponent(cvssV3)}`,
-      formatDate(startDate) && `startDate=${encodeURIComponent(formatDate(startDate))}`,
-      formatDate(endDate) && `endDate=${encodeURIComponent(formatDate(endDate))}`,
+      formatDate(startDate) && `pubStartDate=${encodeURIComponent(formatDate(startDate))}`,
+      formatDate(endDate) && `pubEndDate=${encodeURIComponent(formatDate(endDate))}`,
     ].filter(Boolean).join('&');
   
     const url = `/cvelist${queryParams ? `?${queryParams}` : ''}`;
@@ -222,6 +227,7 @@ function factoryclassification() {
                         value={endDate}
                         onChange={handleEndDateChange}
                         maxDate={today}
+                        // minDate={startDate}
                         disabled={CVEID !== null && CVEID !== ""}  
                         renderInput={(params) => (
                           <TextField {...params} size="small" fullWidth/>
