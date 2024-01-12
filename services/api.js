@@ -2,7 +2,7 @@ import axios from "axios";
 import { getToken } from "../utils/token";
 
 const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_BASE_API_URL,
+  baseURL: process.env.NEXT_PUBLIC_BASE_API_URL + `/api`,
   timeout: 10000,
 });
 
@@ -20,7 +20,7 @@ const getCVEList = async (params, resultsPerPage, startIndex) => {
     startIndex,
   };
 
-  return await api.get(`/api/getcvelist`, {
+  return await api.get(`/getcvelist`, {
     params: requestParams,
   });
 };

@@ -26,6 +26,9 @@ import {
   CircularProgress,
   Pagination,
   List,
+  ListItemButton,
+  ListItemText,
+  ListItem, 
 } from "@mui/material";
 import { debounce, result } from "lodash";
 import React, { useCallback, useEffect, useState } from "react";
@@ -58,7 +61,8 @@ const factoryclassification= () => {
   const pubStartDate = router.query.startdate
   const pubEndDate = router.query.enddate
   const [startIndex, setStartIndex] = React.useState(1);
-  const [resultsPerPage, setResultPerPage] = React.useState(5);
+  const [resultsPerPage, setResultPerPage] = React.useState(20);
+  const [totalResult, setTotalResult] = React.useState(null);
 
   const debounceMountCVEList = useCallback(
     debounce(mountCVEList, 400),
@@ -73,7 +77,7 @@ const factoryclassification= () => {
 
   async function mountCVEList(params, resultsPerPage, startIndex) {
     try {
-
+      console.log("mountCVEList", params, resultsPerPage, startIndex)
       setIsModalLoading(true);
 
       const filteredParams = Object.fromEntries(
@@ -84,7 +88,8 @@ const factoryclassification= () => {
       const getcveList = await api.getCVEList(filteredParams, resultsPerPage, startIndex);
       const { data } = getcveList;
       console.log('dataaaa', data)
-      setCvelist(data.data)
+      setCvelist(data.cvelist)
+      setTotalResult(data.totalResults);
       setIsModalLoading(false);
       //   setIsModalAddProcessTypeOpen(false);
     } catch (error) {
@@ -93,16 +98,21 @@ const factoryclassification= () => {
       console.log(error);
     }
   }
+  console.log("totalResult", totalResult)
 
   useEffect(() => {
     if (!router.isReady) return;
     debounceMountCVEList(router.query, resultsPerPage, startIndex);
-    const cveId = router.query.cveId 
-    const cvssV3Severity = router.query.cvss
-    const cweId = router.query.cweId 
-    const pubStartDate = router.query.startdate
-    const pubEndDate = router.query.enddate
   }, [router.isReady]);
+
+  const handleIndexChange = (event, newIndex) => {
+    if (startIndex === newIndex) {
+      return;
+    }
+    setStartIndex(newIndex);
+    console.log("newindex",newIndex);
+   debounceMountCVEList(router.query, resultsPerPage, newIndex);
+  };
 
 
   return (
@@ -118,40 +128,49 @@ const factoryclassification= () => {
         <Divider sx={{ my: 2 }} />
        
         <Grid container justifyContent="space-between">
-        <List sx={{ mb: 2 }} >
-        {cvelist && cvelist.map(({ cveid, description, publishedate, updatedate, cvssscore }) => (
-          <Paper elevation={3} sx={{ backgroundColor: 'white', mb: 2, padding: 2 }} key={cveid}>
-            <ListItemButton  onClick={() => router.push(`/cvelist/${cveid}`)} >
-              <ListItemText
-                primary={cveid}
-                secondary={description}
-                primaryTypographyProps={{ variant: 'h6' }}  // Increase font size
-                secondaryTypographyProps={{ variant: 'body1' }}  // Increase font size
-              />
-               
-            </ListItemButton>
-            <Divider />
-            <ListItem>
-                <Grid container spacing={2}>
-                <Grid item xs={12} md={6}>
-                    <ListItemText primary="Published At" secondary={publishedat} />
-                </Grid>
-                <Grid item xs={12} md={6}>
-                    <ListItemText primary="Updated At" secondary={updatedat} />
-                </Grid>
-                <Grid item xs={12} md={6}>
-                    <ListItemText primary="CVSS Score" secondary={cvssscore} />
-                </Grid>
-                </Grid>
-            </ListItem>
-          </Paper>
-        ))}
-      </List>
+        <List sx={{ mb: 2 }}>
+          {cvelist && cvelist.length > 0 ? (
+            cvelist.map((cveItem, index) => (
+              <Paper elevation={3} sx={{ backgroundColor: 'white', mb: 2, padding: 2 }} key={index}>
+                <ListItemButton onClick={() => router.push(`/cvelist/${cveItem.cveid}`)}>
+                  <ListItemText
+                    primary={cveItem.cveid}
+                    secondary={cveItem.description}
+                    primaryTypographyProps={{ variant: 'h6' }}
+                    secondaryTypographyProps={{ variant: 'body1' }}
+                  />
+                </ListItemButton>
+                <Divider />
+                <ListItem>
+                  <Grid container spacing={2}>
+                    <Grid item xs={12} md={6}>
+                      <ListItemText primary="Published At" secondary={cveItem.publishedat} />
+                    </Grid>
+                    <Grid item xs={12} md={6}>
+                      <ListItemText primary="Updated At" secondary={cveItem.updatedat} />
+                    </Grid>
+                    <Grid item xs={12} md={6}>
+                      <ListItemText primary="CVSS Score" secondary={cveItem.cvssscore} />
+                    </Grid>
+                  </Grid>
+                </ListItem>
+              </Paper>
+            ))
+          ) : (
+            <List>
+              <ListItem>
+                <ListItemText primary="No CVEs available" />
+              </ListItem>
+            </List>
+          )}
+        </List>
+
+
 
 
     </Grid>
     <Stack spacing={2} alignItems={'center'}>
-      <Pagination count={10} page={startIndex}  color="primary" size="large" />
+      <Pagination count={Math.ceil(totalResult / resultsPerPage)} page={startIndex} onChange={handleIndexChange} color="primary" size="large" />
      
     </Stack>
       <Divider sx={{ my: 2 }} />
