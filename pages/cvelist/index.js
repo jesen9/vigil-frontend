@@ -69,7 +69,7 @@ const factoryclassification= () => {
     setStartDate(newStartValue);
   };
 
-  console.log("router query", router.query);
+  // console.log("router query", router.query);
 
   async function mountCVEList(params, resultsPerPage, startIndex) {
     try {
@@ -80,15 +80,15 @@ const factoryclassification= () => {
         Object.entries(params).filter(([key, value]) => value !== undefined && value !== null && value !== "null")
       );
       
-      console.log("filteredParams", filteredParams)
+      // console.log("filteredParams", filteredParams)
       const getcveList = await api.getCVEList(filteredParams, resultsPerPage, startIndex);
       const { data } = getcveList;
-      console.log('data', data)
+      console.log('dataaaa', data)
       setCvelist(data.data)
       setIsModalLoading(false);
       //   setIsModalAddProcessTypeOpen(false);
     } catch (error) {
-      setIsModalLoading(true);
+      setIsModalLoading(false);
       displayToast("error", "Failed to Fetch Factory Details Data");
       console.log(error);
     }
@@ -119,7 +119,7 @@ const factoryclassification= () => {
        
         <Grid container justifyContent="space-between">
         <List sx={{ mb: 2 }} >
-        {cvelist.map(({ cveid, description, publishedat, updatedat, cvssscore }) => (
+        {cvelist && cvelist.map(({ cveid, description, publishedate, updatedate, cvssscore }) => (
           <Paper elevation={3} sx={{ backgroundColor: 'white', mb: 2, padding: 2 }} key={cveid}>
             <ListItemButton  onClick={() => router.push(`/cvelist/${cveid}`)} >
               <ListItemText

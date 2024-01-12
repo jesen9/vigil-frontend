@@ -20,7 +20,7 @@ const getCVEList = async (params, resultsPerPage, startIndex) => {
     startIndex,
   };
 
-  return await api.get(`/getcvelist`, {
+  return await api.get(`/api/getcvelist`, {
     params: requestParams,
   });
 };
