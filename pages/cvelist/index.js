@@ -63,6 +63,8 @@ const factoryclassification= () => {
   const [startIndex, setStartIndex] = React.useState(1);
   const [resultsPerPage, setResultPerPage] = React.useState(20);
   const [totalResult, setTotalResult] = React.useState(null);
+  const [noDataFound, setNoDataFound] = useState(false);
+
 
   const debounceMountCVEList = useCallback(
     debounce(mountCVEList, 400),
@@ -88,13 +90,26 @@ const factoryclassification= () => {
       const getcveList = await api.getCVEList(filteredParams, resultsPerPage, startIndex- 1);
       const { data } = getcveList;
       console.log('dataaaa', data)
-      setCvelist(data.cvelist)
-      setTotalResult(data.totalResults);
-      setIsModalLoading(false);
+
+      if (data.cvelist.length === 0){
+        setIsModalLoading(false);
+        displayToast("info", "Data Not Found");
+        setNoDataFound(true);
+      }
+      else if (data.code ==="ECONNABORTED"){
+        setIsModalLoading(false);
+        displayToast("info", data.message);
+      }
+      else {
+        setCvelist(data.cvelist)
+        setTotalResult(data.totalResults);
+        setIsModalLoading(false);
+      }
+      
       //   setIsModalAddProcessTypeOpen(false);
     } catch (error) {
       setIsModalLoading(false);
-      displayToast("error", "Failed to Fetch Factory Details Data");
+      displayToast("error", "Failed to Fetch CVE List Data");
       console.log(error);
     }
   }
@@ -130,40 +145,39 @@ const factoryclassification= () => {
        
         <Grid container justifyContent="space-between">
         <List sx={{ mb: 2 }}>
-          {cvelist && cvelist.length > 0 ? (
-            cvelist.map((cveItem, index) => (
-              <Paper elevation={3} sx={{ backgroundColor: 'white', mb: 2, padding: 2 }} key={index}>
-                <ListItemButton onClick={() => router.push(`/cvelist/${cveItem.cveid}`)}>
-                  <ListItemText
-                    primary={cveItem.cveid}
-                    secondary={cveItem.description}
-                    primaryTypographyProps={{ variant: 'h6' }}
-                    secondaryTypographyProps={{ variant: 'body1' }}
-                  />
-                </ListItemButton>
-                <Divider />
-                <ListItem>
-                  <Grid container spacing={2}>
-                    <Grid item xs={12} md={6}>
-                      <ListItemText primary="Published At" secondary={cveItem.publishedat} />
-                    </Grid>
-                    <Grid item xs={12} md={6}>
-                      <ListItemText primary="Updated At" secondary={cveItem.updatedat} />
-                    </Grid>
-                    <Grid item xs={12} md={6}>
-                      <ListItemText primary="CVSS Score" secondary={cveItem.cvssscore} />
-                    </Grid>
-                  </Grid>
-                </ListItem>
-              </Paper>
-            ))
-          ) : (
-            <List>
+        {noDataFound ? (
+          <Typography variant="h6" sx={{textAlign: 'center', marginTop: 2 }}>
+            No CVE List data found.
+          </Typography>
+        ) : (
+          cvelist && cvelist.map((cveItem, index) => (
+            <Paper elevation={3} sx={{ backgroundColor: 'white', mb: 2, padding: 2 }} key={index}>
+              <ListItemButton onClick={() => router.push(`/cvelist/${cveItem.cveid}`)}>
+                <ListItemText
+                  primary={cveItem.cveid}
+                  secondary={cveItem.description}
+                  primaryTypographyProps={{ variant: 'h6' }}
+                  secondaryTypographyProps={{ variant: 'body1' }}
+                />
+              </ListItemButton>
+              <Divider />
               <ListItem>
-                <ListItemText primary="No CVEs available" />
+                <Grid container spacing={2}>
+                  <Grid item xs={12} md={6}>
+                    <ListItemText primary="Published At" secondary={cveItem.publishedat} />
+                  </Grid>
+                  <Grid item xs={12} md={6}>
+                    <ListItemText primary="Updated At" secondary={cveItem.updatedat} />
+                  </Grid>
+                  <Grid item xs={12} md={6}>
+                    <ListItemText primary="CVSS Score" secondary={cveItem.cvssscore} />
+                  </Grid>
+                </Grid>
               </ListItem>
-            </List>
-          )}
+            </Paper>
+          ))
+        )}
+
         </List>
 
 

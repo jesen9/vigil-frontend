@@ -25,10 +25,13 @@ import {
   Pagination,
   Link,
   IconButton, 
+  Modal,
+  CircularProgress,
 } from "@mui/material";
 import { useCallback, useEffect, useState } from "react";
 import { debounce } from "lodash";
 import { useRouter } from 'next/router';
+import useToast from "../../utils/toast";
 import AddIcon from "@mui/icons-material/Add";
 import ViewListIcon from "@mui/icons-material/ViewList";
 import EditIcon from "@mui/icons-material/Edit";
@@ -41,6 +44,9 @@ import dayjs, { Dayjs } from 'dayjs';
 import { color } from "@mui/system";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ReplyIcon from '@mui/icons-material/Reply';
+import api from "../../services/api"
+import ModalWrapper from "../../components/ModalWrapper";
+import ModalInputWrapper from "../../components/ModalInputWrapper";
 
 const Comment = ({ username, date, content, onEdit, onDelete, onReply }) => {
   return (
@@ -133,15 +139,48 @@ const Comment = ({ username, date, content, onEdit, onDelete, onReply }) => {
 
 
 function factoryclassification () {
-    
-  const [page, setPage] = React.useState(1);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const router = useRouter();
+  const [displayToast] = useToast();
+  const [isModalLoading, setIsModalLoading] = useState(false);
+  const cveId = router.query.id
   const [startDate, setStartDate] = React.useState(null);
+  const uniqueCWEIds = new Set();
   const [endDate, setEndDate] = React.useState(null);
   const today = dayjs();
   const options = ['Low', 'Medium', 'High',];
   const [newComment, setNewComment] = useState('');
+  const [cveDetails, setCveDetails] = React.useState([]);
+  const [cpe, setCPE] = React.useState([]);
+  const [poc, setPOC] = React.useState([]);
+  const [note, setNote] = React.useState([]);
+
+  const debounceMountCVEDetails = useCallback(
+    debounce(mountCVEDetails, 400),
+    []
+  );
+
+  async function mountCVEDetails(cveId) {
+    try {
+      setIsModalLoading(true);
+      const getcveDetails = await api.getCVEDetails(cveId);
+      const { data } = getcveDetails;
+      console.log('ini datanya ya', data)
+      setCveDetails(data);
+      setCPE(data.cpe)
+      setPOC(data.poc)
+      setIsModalLoading(false);
+    } catch (error) {
+      setIsModalLoading(false);
+      displayToast("error", "Failed to Fetch CVE Details Data");
+      console.log(error);
+    }
+  }
+
+  useEffect(() => {
+    // console.log("halo gais")
+    if (!router.isReady) return;
+    debounceMountCVEDetails(router.query.id);
+  }, [router.isReady]);
 
 
   const handleStartDateChange = (newStartValue) => {
@@ -181,19 +220,9 @@ function factoryclassification () {
     setPage(0);
   };
 
-  const cveid = router.query.id;
 
-  const [cvedetail, setCvedetail] = React.useState([]);
-  React.useEffect(()=>{
-    const getData = async () =>{
-      const query = await fetch(`http://localhost:8000/api/getcvedetails?cveId=${cveid}`);
-      const response = await query.json();
-      setCvedetail(response);
-    }
-    getData();
-    
-    console.log('ni hasil cvedetail', cvedetail, cvedetail.length);
-  },[]);
+
+
   
   return (
     <Box sx={{ width: "100%", p: 3 }}>
@@ -213,41 +242,46 @@ function factoryclassification () {
       </Grid>
 
       <Divider sx={{ my: 2 }} />
-      {/* {cvedetail.map((cve, index) => ( */}
-        <Grid container component={Paper} sx={{p:2, marginBottom:3}} justifyContent={'space-between'}  rowSpacing={1}>
-          <Grid item  >
-            <Typography variant="h4" sx={{ fontWeight: 600, mt: 0.5 }}>
-              {cvedetail.cveid}
-            </Typography>
-            <Divider sx={{ my: 2 }} />
-            <Typography variant="h6" sx={{ fontWeight: 400, mt: 0.5 }}>
-              {cvedetail.description}
-            </Typography>
-            <Divider sx={{ my: 2 }} />
-          </Grid>
-          <Grid item xs={6}>
-            <Typography variant="h6" sx={{ fontWeight: 300, mt: 0.5 }}>
-              Published At: {cvedetail.publishedat}
-            </Typography>
-          </Grid>
-          <Grid item xs={6}>
-            <Typography variant="h6" sx={{ fontWeight: 300, mt: 0.5 }}>
-              Updated At: {cvedetail.updatedat}
-            </Typography>
-          </Grid>
-        </Grid>
-      {/* ))} */}
+      {/* {Array.isArray(cveDetails) && cveDetails.map((cvedetail, index) => ( */}
+  <Grid  container component={Paper} sx={{ p: 2, marginBottom: 3 }} justifyContent={'space-between'} rowSpacing={1} elevation={7}>
+    <Grid item>
+      <Typography variant="h3" sx={{ fontWeight: 600, mt: 0.5 }}>
+        {cveDetails.cveid}
+      </Typography>
+      <Divider sx={{ my: 2 }} />
+      <Typography variant="h6" sx={{ fontWeight: 400, mt: 0.5 }}>
+        {cveDetails.description}
+      </Typography>
+      <Divider sx={{ my: 2 }} />
+    </Grid>
+    <Grid item xs={6}>
+      <Typography variant="h6" sx={{ fontWeight: 300, mt: 0.5 }}>
+        Published At: {cveDetails.publishedat}
+      </Typography>
+    </Grid>
+    <Grid item xs={6}>
+      <Typography variant="h6" sx={{ fontWeight: 300, mt: 0.5 }}>
+        Updated At: {cveDetails.updatedat}
+      </Typography>
+    </Grid>
+  </Grid>
+{/* ))} */}
+
       
 
        {/* CVSS */}
 
-       <Grid container  
-       justifyContent={"space-between"}
-       columnSpacing={{ xs: 1, sm: 2, md: 3 }}
-       sx={{ mt: 2 }}
+
+      <Card sx={{ borderRadius: 3, mt: 1, mb: 3 }}>
+      <CardContent sx={{ overflow: "auto" }}>
+       <Grid 
+            container
+            justifyContent={"space-between"}
+            columnSpacing={{ xs: 1, sm: 2, md: 3 }}
+            sx={{ my: 1 }}
        >
-           <Grid item  >
-             <Typography variant="h4" sx={{ fontWeight: 600}}>
+           <Grid container item xs={4} alignItems="center"  >
+             <Typography variant="h5" sx={{ fontWeight: 600}}>
                CVSS
              </Typography>
           
@@ -271,7 +305,7 @@ function factoryclassification () {
               </TableCell>
             </TableHead>
               <TableBody>
-              {cvedetail && cvedetail.cvssscore.map((cvss, index) => (
+              {cveDetails && cveDetails.cvssscore && cveDetails.cvssscore.map((cvss, index) => (
                   <TableRow key={index}>
                     <TableCell align="center">
                       {cvss.version}
@@ -291,49 +325,60 @@ function factoryclassification () {
             </Table>
             </TableContainer>
            </Paper>
-  
+           </CardContent>
+      </Card>
 
 
       {/* CWE */}
-
+      <Card sx={{ borderRadius: 3, mt: 1, mb: 3 }}>
+      <CardContent sx={{ overflow: "auto" }}>
       <Grid   
       container
       justifyContent={"space-between"}
       columnSpacing={{ xs: 1, sm: 2, md: 3 }}
-      sx={{ mt: 2 }}
+      sx={{ my: 1 }}
       >
-           <Grid item  >
-             <Typography variant="h4" sx={{ fontWeight: 600 }}>
+           <Grid container item xs={4} alignItems="center"  >
+             <Typography variant="h5" sx={{ fontWeight: 600 }}>
                CWE IDs
              </Typography>
           
            </Grid>
          </Grid>
          
-      {/* {cvedetail.map((cve, index) => (
-           <Grid container  sx={{ p:2, marginBottom:3}} component={Paper} >
-           <Grid item >
-           <Typography variant="h6" sx={{ fontWeight: 400, mt: 0.5 }}>
-               {cve.cweid} : {cve.cwename}
-             </Typography>
-             <Divider sx={{ my: 2 }} />
-             <Typography variant="h6" sx={{ fontWeight: 400, mt: 0.5 }}>
-               {cve.cwedescription}
-             </Typography>
-           </Grid>
-         </Grid>
-      ))} */}
+         {cveDetails && cveDetails.cwe && cveDetails.cwe.map((cwe, index) => {
+            // Check if the cweid is unique; if not, skip rendering
+            if (!uniqueCWEIds.has(cwe.cweid)) {
+              uniqueCWEIds.add(cwe.cweid);
+
+              return (
+                <Grid key={index} container sx={{ p: 2, marginBottom: 3 }} component={Paper}>
+                  <Grid item>
+                    <Typography variant="h6" sx={{ fontWeight: 400, mt: 0.5 }}>
+                      {cwe.cweid}
+                    </Typography>
+                    {/* ... (additional content related to cwe) */}
+                  </Grid>
+                </Grid>
+              );
+            }
+
+            return null; // Skip rendering for duplicate cweid
+          })}
+        </CardContent>
+      </Card>
 
       
       {/* CPE*/}
-      
-      <Grid container  
-       justifyContent={"space-between"}
-       columnSpacing={{ xs: 1, sm: 2, md: 3 }}
-       sx={{ mt: 2 }}
+      <Card sx={{ borderRadius: 3, mt: 1, mb: 3 }}>
+      <CardContent sx={{ overflow: "auto" }}>
+      <Grid container
+            justifyContent={"space-between"}
+            columnSpacing={{ xs: 1, sm: 2, md: 3 }}
+            sx={{ my: 1 }}
        >
-           <Grid item  >
-             <Typography variant="h4" sx={{ fontWeight: 600}}>
+           <Grid container item xs={4} alignItems="center"  >
+             <Typography variant="h5" sx={{ fontWeight: 600}}>
                CPE
              </Typography>
           
@@ -351,36 +396,40 @@ function factoryclassification () {
               </TableCell>
             </TableHead>
             <TableBody>
-              <TableRow>
-              <TableBody>
-                  <TableRow key={index}>
-              {/* {cvedetail && */}
-                {/* cvedetail.map((cveitem, index) => ( */}
+                  {cveDetails && cveDetails.cpe && cveDetails.cpe.map((cpe, index) => (
+                    <TableRow key={index}>
                     <TableCell align="center">
-                      {/* {cvedetail.version} */}
+                      {cpe.criteria}
                     </TableCell>
                     <TableCell align="center">
-                      {/* {cvedetail.version_string} */}
+                      {cpe.versionStartIncluding && cpe.versionEndExcluding
+                        ? `${cpe.versionStartIncluding} - ${cpe.versionEndExcluding}`
+                        : cpe.versionStartIncluding
+                          ? cpe.versionStartIncluding
+                          : cpe.versionEndExcluding
+                            ? cpe.versionEndExcluding
+                            : 'No version information available'}
                     </TableCell>
                   </TableRow>
-                {/* ))} */}
-            </TableBody>
-              </TableRow>
+                ))}
             </TableBody>
             </Table>
             </TableContainer>
            </Paper>
-
+        </CardContent>
+      </Card>
 
            
           {/* POC*/}
-        <Grid container  
-          justifyContent={"space-between"}
-          columnSpacing={{ xs: 1, sm: 2, md: 3 }}
-          sx={{ mt: 2 }}
+          <Card sx={{ borderRadius: 3, mt: 1, mb: 3 }}>
+      <CardContent sx={{ overflow: "auto" }}>
+        <Grid container
+            justifyContent={"space-between"}
+            columnSpacing={{ xs: 1, sm: 2, md: 3 }}
+            sx={{ my: 1 }}
         >
-          <Grid item  >
-             <Typography variant="h4" sx={{ fontWeight: 600}}>
+          <Grid container item xs={4} alignItems="center" >
+             <Typography variant="h5" sx={{ fontWeight: 600}}>
                POC
              </Typography>
           
@@ -404,7 +453,30 @@ function factoryclassification () {
                   </Link>
                 </CardContent>
             </Card>
+          
           {/* ))} */}
+
+          </CardContent>
+      </Card>
+
+            {/* ------------------------------------ MODAL LOADING ------------------------------------ */}
+
+            <Modal open={isModalLoading} onClose={() => setIsModalLoading(false)}>
+        {/* <ModalWrapper> */}
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              // width: 750,
+              alignItems: "center",
+              height: "100%",
+            }}
+          >
+            <CircularProgress color="primary" size={50} thickness={4} />
+          </Box>
+        {/* </ModalWrapper> */}
+      </Modal>
          
         
 

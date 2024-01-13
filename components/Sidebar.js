@@ -15,7 +15,7 @@ import {
 import { styled, useTheme } from "@mui/material/styles";
 import MuiDrawer from "@mui/material/Drawer";
 import DoubleArrowIcon from "@mui/icons-material/DoubleArrow";
-import CenturyLogo from "../public/static/logo/century.png"
+// import CenturyLogo from "../public/static/logo/century.png"
 import VigilLogo from "../public/static/logo/vigil.png";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
@@ -256,8 +256,8 @@ const Sidebar = () => {
       <DrawerHeader sx={{ py: 3, px: 0, }}>
         <Box
           sx={{
-            width: "60px",
-            height: "60px",
+            width: "80px",
+            height: "80px",
             // transform: sideBarOpen ? "scale(1)" : "scale(0.6)",
             // transition: (theme) =>
             //   theme.transitions.create("transform", {
@@ -265,18 +265,17 @@ const Sidebar = () => {
             //     duration: theme.transitions.duration.complex,
             //   }),
             
-            border: "1px solid black",
-            
           }}
         >
           <Image
-            src={VigilLogo}
-            width="100%"
-            height="100%"
-            // layout="fill" 
+            src="/static/logo/vigil.png"
+            width={100}
+            height={100}
+            layout="responsive"
             alt="Sidebar Logo"
-            
+            priority
           />
+
           
         </Box>
        

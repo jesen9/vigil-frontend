@@ -19,17 +19,20 @@ const getCVEList = async (params, resultsPerPage, startIndex) => {
     resultsPerPage,
     startIndex,
   };
-
+  console.log("requestParams", requestParams);
   return await api.get(`/getcvelist`, {
     params: requestParams,
   });
 };
 
-
-
-
+const getCVEDetails = async (cveId) => {
+  return await api.get(
+    `/getcvedetails?cveId=${cveId}`
+  );
+};
 
 export default {
   loginApi,
   getCVEList,
+  getCVEDetails,
 };

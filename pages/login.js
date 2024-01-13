@@ -17,7 +17,7 @@ import Image from "next/image";
 import api from "../services/api";
 import { setToken, getToken } from "../utils/token";
 import useToast from "../utils/toast";
-import CenturyLogo from "../public/static/logo/century.png";
+// import CenturyLogo from "../public/static/logo/century.png";
 
 const Login = () => {
   const router = useRouter();
