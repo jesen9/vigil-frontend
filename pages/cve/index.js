@@ -46,10 +46,9 @@ function factoryclassification() {
   const [cvssV3, setCvssV3] = React.useState(null);
   const today = dayjs();
   const cvssVersion = ['cvssV2', 'cvssV3'];
- 
- 
   const [selectedVersion, setSelectedVersion] = useState("");
   const [cvssOptions, setCvssOptions] = useState([]);
+
 
 
   const handleVersionChange = (event) => {

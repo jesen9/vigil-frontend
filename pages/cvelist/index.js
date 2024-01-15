@@ -87,7 +87,7 @@ const factoryclassification= () => {
       );
       
       // console.log("filteredParams", filteredParams)
-      const getcveList = await api.getCVEList(filteredParams, resultsPerPage, startIndex- 1);
+      const getcveList = await api.getCVEList(filteredParams, resultsPerPage, ((startIndex- 1)* resultsPerPage));
       const { data } = getcveList;
       console.log('dataaaa', data)
 

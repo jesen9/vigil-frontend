@@ -14,16 +14,16 @@ export const Routes = [
     menu: "CVE",
 
   },
-  {
-    path: "/cwe",
-    menu: "CWE",
+  // {
+  //   path: "/cwe",
+  //   menu: "CWE",
 
-  },
-  {
-    path: "/cpe",
-    menu: "CPE",
+  // },
+  // {
+  //   path: "/cpe",
+  //   menu: "CPE",
 
-  },
+  // },
   {
     path: "/advancedSearch",
     menu: "Advanced Search",

@@ -220,10 +220,6 @@ function factoryclassification () {
     setPage(0);
   };
 
-
-
-
-  
   return (
     <Box sx={{ width: "100%", p: 3 }}>
        <Grid container justifyContent={"space-between"}>
@@ -350,17 +346,20 @@ function factoryclassification () {
             // Check if the cweid is unique; if not, skip rendering
             if (!uniqueCWEIds.has(cwe.cweid)) {
               uniqueCWEIds.add(cwe.cweid);
+              if (cwe.cweid.startsWith("CWE")) {
+                uniqueCWEIds.add(cwe.cweid);
 
-              return (
-                <Grid key={index} container sx={{ p: 2, marginBottom: 3 }} component={Paper}>
-                  <Grid item>
-                    <Typography variant="h6" sx={{ fontWeight: 400, mt: 0.5 }}>
-                      {cwe.cweid}
-                    </Typography>
-                    {/* ... (additional content related to cwe) */}
+                return (
+                  <Grid key={index} container sx={{ p: 2, marginBottom: 3 }} component={Paper}>
+                    <Grid item>
+                      <Typography variant="h6" sx={{ fontWeight: 400, mt: 0.5 }}>
+                        {cwe.cweid}
+                      </Typography>
+                      {/* ... (additional content related to cwe) */}
+                    </Grid>
                   </Grid>
-                </Grid>
-              );
+                );
+              }
             }
 
             return null; // Skip rendering for duplicate cweid
@@ -392,7 +391,10 @@ function factoryclassification () {
                 CPE Criteria
               </TableCell>
               <TableCell align="center" sx={{ fontWeight: "600" }}>
-                Version 
+                Version Start
+              </TableCell>
+              <TableCell align="center" sx={{ fontWeight: "600" }}>
+                Version End
               </TableCell>
             </TableHead>
             <TableBody>
@@ -402,13 +404,18 @@ function factoryclassification () {
                       {cpe.criteria}
                     </TableCell>
                     <TableCell align="center">
-                      {cpe.versionStartIncluding && cpe.versionEndExcluding
-                        ? `${cpe.versionStartIncluding} - ${cpe.versionEndExcluding}`
-                        : cpe.versionStartIncluding
-                          ? cpe.versionStartIncluding
-                          : cpe.versionEndExcluding
-                            ? cpe.versionEndExcluding
-                            : 'No version information available'}
+                      {cpe.versionStartIncluding
+                        ? `${cpe.versionStartIncluding} (including)`
+                        : cpe.versionStartExcluding
+                        ? `${cpe.versionStartExcluding} (excluding)`
+                        : "N/A"}
+                    </TableCell>
+                    <TableCell align="center">
+                    {cpe.versionEndIncluding
+                        ? `${cpe.versionEndIncluding} (including)`
+                        : cpe.versionEndExcluding
+                        ? `${cpe.versionEndExcluding} (excluding)`
+                        : "N/A"}
                     </TableCell>
                   </TableRow>
                 ))}
