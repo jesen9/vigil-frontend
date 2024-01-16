@@ -24,7 +24,7 @@ import { getToken, deleteToken } from "../utils/token";
 import { Routes } from "./Routes";
 import { BottomRoutes } from "./BottomRoutes";
 
-const drawerWidth = 300;
+const drawerWidth = 250;
 
 const openedMixin = (theme) => ({
   width: drawerWidth,
@@ -244,6 +244,7 @@ const Sidebar = () => {
       PaperProps={{
         sx: {
           bgcolor: "#8EB4F4",
+          
           // transition: (theme) =>
           //   theme.transitions.create("background-color", {
           //     easing: theme.transitions.easing.easeOut,
@@ -285,11 +286,11 @@ const Sidebar = () => {
         {Routes.map((item, key) => (
           <MenuItem key={key} item={item} />
         ))}
-        <ListFooter>
+        {/* <ListFooter>
           {BottomRoutes.map((item, key) => (
             <MenuItem key={key} item={item} />
           ))}
-        </ListFooter>
+        </ListFooter> */}
       </div>
       {/* <DrawerFooter>
         {sideBarOpen && (

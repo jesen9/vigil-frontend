@@ -1,6 +1,7 @@
 import {
     Box,
     Grid,
+    CircularProgress,
     Table,
     TableRow,
     TableCell,
@@ -15,135 +16,71 @@ import {
     CardHeader,
     TextField,
     Button,
-    Paper,
+    Modal,
     Divider,
-    Stack,
-    Autocomplete,
-    Select,
-    MenuItem,
-    FormControl,
-    InputLabel,
+    Dialog,
+    DialogContent,
+    DialogContentText,
+    DialogTitle,
   } from "@mui/material";
+  import ErrorOutlineRoundedIcon from "@mui/icons-material/ErrorOutlineRounded";
   import React, { useCallback, useEffect, useState } from "react";
+  import useToast from "../../utils/toast";
+  import ModalWrapper from "../../components/ModalWrapper";
+  import ModalInputWrapper from "../../components/ModalInputWrapper";
   import { debounce } from "lodash";
-  import { useRouter } from 'next/router';
-  import AddIcon from "@mui/icons-material/Add";
-  import ViewListIcon from "@mui/icons-material/ViewList";
-  import EditIcon from "@mui/icons-material/Edit";
-  import DeleteIcon from "@mui/icons-material/Delete";
-  import SearchIcon from "@mui/icons-material/Search";
-  import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-  import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-  import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-  import dayjs, { Dayjs } from 'dayjs';
   import Image from 'next/image';
-  import { color } from "@mui/system";
+  import { color, display } from "@mui/system";
   import vigil from "../../public/static/logo/Vigil.png";
+  import api from "../../services/api";
   
   
   function factoryclassification() {
-    const [page, setPage] = React.useState(0);
-    const [rowsPerPage, setRowsPerPage] = React.useState(5);
-    const router = useRouter();
-    const [startDate, setStartDate] = React.useState(null);
-    const [endDate, setEndDate] = React.useState(null);
-    const [CVEID, setCVEID] = React.useState(null);
-    const [cvss, setCvss] = React.useState(null);
-    const [cvssV2, setCvssV2] = React.useState(null);
-    const [cvssV3, setCvssV3] = React.useState(null);
-    const today = dayjs();
-    const cvssVersion = ['cvssV2', 'cvssV3'];
+    const [openUpdate, setOpenUpdate] = React.useState(false);
+    const [isModalLoading, setIsModalLoading] = useState(false);
+    const [displayToast] = useToast();
+    const handleUpdate = () => {
+      setOpenUpdate(true);
+    };
+    const handleCloseUpdate = () => {
+      setOpenUpdate(false);
+    };
    
    
-    const [selectedVersion, setSelectedVersion] = useState("");
-    const [cvssOptions, setCvssOptions] = useState([]);
   
+
+    const debounceMountUpdateDatabase = useCallback(
+      debounce(mountUpdateDatabase, 400),
+      []
+    );
+
+    async function mountUpdateDatabase() {
+      try {
+        setIsModalLoading(true);
+        
+
+        const updateDatabase = await api.getUpdateDatabase();
+        const { data } = updateDatabase;
+        console.log('dataaaa', data)
   
-    const handleVersionChange = (event) => {
-      const version = event.target.value;
-      setSelectedVersion(version);
-    
-      const newCvssOptions = getOptionsForVersion(version);
-  
-      setCvssOptions(newCvssOptions);
-    };
-  
-    // console.log("halo", selectedVersion, cvss);
-  
-    const handleCvssChange = (event) => {
-      const newValue = event.target.value;
-      setCvss(newValue);
-      if (selectedVersion === "cvssV2") {
-        setCvssV2(newValue);
-      }
-      else
-        setCvssV3(newValue);
-      // Handle the change of cvss value here
-    };
-  
-    const getOptionsForVersion = (version) => {
-      // Example logic, replace with your implementation
-      if (version === "cvssV2") {
-        return ["LOW", "MEDIUM", "HIGH"];
-      } else if (version === "cvssV3") {
-        return ["LOW", "MEDIUM", "HIGH", "CRITICAL"];
-      } else {
-        return []; // Default or handle other cases
-      }
-    };
-  
-    const handleStartDateChange = (newStartValue) => {
-      setStartDate(newStartValue);
-    };
-  
-    const handleEndDateChange = (newStopValue) => {
-      if (startDate) {
-        const maxEndDate = dayjs(startDate).add(120, 'days');
-        if (dayjs(newStopValue).isAfter(maxEndDate)) {
-          // If the selected EndDate is more than 120 days from startDate, reset it
-          setEndDate(null);
-          alert('The range between start date and stop date should not be more than 120 days.');
-        } else {
-          setEndDate(newStopValue);
+        if (data.cvelist.length === 0){
+          setIsModalLoading(false);
+          displayToast("info", "Data Not Found");
+          setNoDataFound(true);
         }
-      } else {
-        // If there is no startDate selected, set the EndDate directly
-        setEndDate(newStopValue);
+        else {
+          displayToast("success", "Update Successfully");
+          setIsModalLoading(false);
+        }
+        
+        //   setIsModalAddProcessTypeOpen(false);
+      } catch (error) {
+        setIsModalLoading(false);
+        displayToast("error", "Update Failed");
+        console.log(error);
       }
-    };
-  
-    const handleClick = () => {
-      const formatDate = (date) => date && date.$d.toISOString();
-  
-      if ((!startDate && endDate) || (startDate && !endDate)) {
-        alert('Please enter both start date and end date');
-        return;
-      }
-    
-      const queryParams = [
-        CVEID !== null && `cveId=${encodeURIComponent(CVEID)}`,
-        cvssV2 !== null && `cvssV2Severity=${encodeURIComponent(cvssV2)}`,
-        cvssV3 !== null && `cvssV3Severity=${encodeURIComponent(cvssV3)}`,
-        formatDate(startDate) && `pubStartDate=${encodeURIComponent(formatDate(startDate))}`,
-        formatDate(endDate) && `pubEndDate=${encodeURIComponent(formatDate(endDate))}`,
-      ].filter(Boolean).join('&');
-    
-      const url = `/cvelist${queryParams ? `?${queryParams}` : ''}`;
-    
-  
-      router.push(url);
-    };
-    
-    console.log("cveid", CVEID);
-    
-    const handleChangePage = (event, newPage) => {
-      setPage(newPage);
-    };
-  
-    const handleChangeRowsPerPage = (event) => {
-      setRowsPerPage(parseInt(event.target.value, 10));
-      setPage(0);
-    };
+    }
+      
   
     return (
       <Box sx={{ width: "100%", p: 3 }}>
@@ -178,9 +115,71 @@ import {
              
             </CardContent>
             <CardActions sx={{ overflow: "auto", m:1 }}>
-                <Button size="small" variant="contained">Update Vigil Database</Button>
+                <Button size="small" variant="contained" onClick={handleUpdate}>Update Vigil Database</Button>
             </CardActions>
         </Card>
+
+        <Dialog open={openUpdate} onClose={handleCloseUpdate}>
+          <DialogTitle sx={{ color: "#dd2c00" }} align="center">
+            {<ErrorOutlineRoundedIcon sx={{ fontSize: 60 }} />}
+          </DialogTitle>
+          <DialogContent>
+          <DialogContentText
+            sx={{ color: "text.secondary", pb: 1.2 }}
+            align="center"
+          >
+            You are about to update your database.
+          </DialogContentText>
+          <DialogContentText
+            sx={{ color: "text.secondary", pt: 1.2 }}
+            align="center"
+          >
+            Are you sure you want to update the database?
+          </DialogContentText>
+          </DialogContent>
+          <DialogContent align="center">
+
+          <Button
+            sx={{ mx: 1 }}
+            variant="outlined"
+            color="error"
+            size="small"
+            onClick={handleCloseUpdate}
+          >
+            No
+          </Button>
+
+          <Button
+            sx={{ mx: 1 }}
+            variant="contained"
+            color="primary"
+            size="small"
+            onClick={() => debounceMountUpdateDatabase()}
+          >
+            Yes
+          </Button>
+        </DialogContent>
+
+        </Dialog>
+
+         {/* ------------------------------------ MODAL LOADING ------------------------------------ */}
+
+         <Modal open={isModalLoading} onClose={() => setIsModalLoading(false)}>
+        {/* <ModalWrapper> */}
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              // width: 750,
+              alignItems: "center",
+              height: "100%",
+            }}
+          >
+            <CircularProgress color="primary" size={50} thickness={4} />
+          </Box>
+        {/* </ModalWrapper> */}
+      </Modal>
         
       </Box>
     );

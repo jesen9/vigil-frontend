@@ -31,6 +31,7 @@ import {
   ListItem, 
 } from "@mui/material";
 import { debounce, result } from "lodash";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import React, { useCallback, useEffect, useState } from "react";
 import ModalWrapper from "../../components/ModalWrapper";
 import ModalInputWrapper from "../../components/ModalInputWrapper";
@@ -133,13 +134,20 @@ const factoryclassification= () => {
 
   return (
     <Box sx={{ width: "100%", p: 3 }}>
-      <Grid container justifyContent="space-between">
-        <Grid item xs={4}>
+      <Grid container justifyContent={"space-between"}>
+        <Grid item xs={4} sm={4} md={4} lg={4}>
+          <IconButton aria-label="back" onClick={() => router.back()}>
+            <ArrowBackIcon />
+          </IconButton>
+        </Grid>
+
+        <Grid item xs={4} sm={4} md={4} lg={4} sx={{ textAlign: "center" }}>
           <Typography variant="h5" sx={{ fontWeight: 600, mt: 0.5 }}>
-            CVE LIST 
+            CVE Details
           </Typography>
         </Grid>
-        </Grid>
+        <Grid item xs={4} sm={4} md={4} lg={4}></Grid>
+      </Grid>
 
         <Divider sx={{ my: 2 }} />
        
@@ -154,7 +162,11 @@ const factoryclassification= () => {
             <Paper elevation={3} sx={{ backgroundColor: 'white', mb: 2, padding: 2 }} key={index}>
               <ListItemButton onClick={() => router.push(`/cvelist/${cveItem.cveid}`)}>
                 <ListItemText
-                  primary={cveItem.cveid}
+                  primary={
+                    <Typography variant="h6" sx={{ color: "#8EB4F4" }}>
+                      {cveItem.cveid}
+                    </Typography>
+                  }
                   secondary={cveItem.description}
                   primaryTypographyProps={{ variant: 'h6' }}
                   secondaryTypographyProps={{ variant: 'body1' }}

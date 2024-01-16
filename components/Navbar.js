@@ -118,8 +118,6 @@ const Navbar = () => {
       sx={{ width: "100%", background: "white", px: 2, py: 2, }}
     >
 
-
-     
       <TextField
         id="keywordSearch"
         name="keywordSearch"

@@ -129,13 +129,13 @@ function factoryclassification() {
 
   return (
     <Box sx={{ width: "100%", p: 3 }}>
-      <Grid container justifyContent="center" alignItems="center" sx={{mb:2}}>
+      <Grid container justifyContent="center" alignItems="center" sx={{}}>
         <Image 
-          src="/static/logo/Vigil.png"
+          src="/static/logo/vigilIcon.png"
           alt="Description of the image"
           priority
-          width={150}
-          height={150}
+          width={200}
+          height={200}
           // include other necessary props like width and height
           />
           
