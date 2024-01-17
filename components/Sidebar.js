@@ -11,6 +11,7 @@ import {
   Collapse,
   Typography,
   Box,
+  Divider,
 } from "@mui/material";
 import { styled, useTheme } from "@mui/material/styles";
 import MuiDrawer from "@mui/material/Drawer";
@@ -24,7 +25,7 @@ import { getToken, deleteToken } from "../utils/token";
 import { Routes } from "./Routes";
 import { BottomRoutes } from "./BottomRoutes";
 
-const drawerWidth = 250;
+const drawerWidth = 230;
 
 const openedMixin = (theme) => ({
   width: drawerWidth,
@@ -255,6 +256,7 @@ const Sidebar = () => {
     >
       
       <DrawerHeader sx={{ py: 3, px: 0, }}>
+      <Divider sx={{ borderColor: '#FFFFFF', mx:1 }} />
         <Box
           sx={{
             width: "80px",
@@ -292,7 +294,7 @@ const Sidebar = () => {
           ))}
         </ListFooter> */}
       </div>
-      <DrawerFooter>
+      {/* <DrawerFooter>
         {sideBarOpen && (
           <Typography
             variant="body2"
@@ -317,7 +319,7 @@ const Sidebar = () => {
         >
           <DoubleArrowIcon />
         </IconButton>
-      </DrawerFooter>
+      </DrawerFooter> */}
     </Drawer>
   );
 };

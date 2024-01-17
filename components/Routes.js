@@ -11,7 +11,7 @@ export const Routes = [
 
   {
     path: "/cve",
-    menu: "CVE",
+    menu: "CVE Search",
 
   },
   // {

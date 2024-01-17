@@ -434,10 +434,13 @@ const handleTooltipClose = () => {
                 return (
                   <Grid key={index} container sx={{ p: 2, marginBottom: 3 }} component={Paper}>
                     <Grid item>
-                      <Typography variant="h6" sx={{ fontWeight: 400, mt: 0.5 }}>
-                        {cwe.cweid}
+                    <Typography variant="subtitle1" sx={{ fontWeight: 400, mt: 0.5 }}>
+                        {cwe.cweid} - {cwe.name}
                       </Typography>
-                      {/* ... (additional content related to cwe) */}
+                        <Divider/>
+                      <Typography variant="body2" color="text.secondary" sx={{ p:1, mb:1}}>
+                        {cwe.description}
+                      </Typography>
                     </Grid>
                   </Grid>
                 );

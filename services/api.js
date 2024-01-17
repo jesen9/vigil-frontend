@@ -33,7 +33,7 @@ const getCVEDetails = async (cveId) => {
 
 const getUpdateDatabase = async () => {
   return await api.get(
-    `/updateDatabase`
+    `/updatedatabase`
   );
 };
 
