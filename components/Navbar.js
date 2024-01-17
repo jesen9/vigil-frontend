@@ -80,21 +80,30 @@ const Navbar = () => {
   // }, []);
   // console.log(cvelist, cvelist.length);
 
-  const handleSubmit = async (e) => {
-    console.log('masok ga sih');
-    e.preventDefault();
-    // const response = await fetch(`http://localhost:8000/api/getcvelist?keywordSearch=${keyword}&resultsPerPage=10&startIndex=0`);
-    // const cvelist = await response.json();
-    console.log(cvelist, cvelist.length);
-    router.push(`/cvelist?keywordSearch=${keyword}&resultsPerPage=10&startIndex=0`);
-    // gimana caranya kirim cvelist ke ../cvelist/index.js?
-  }
+  // const handleSubmit = async (e) => {
+  //   console.log('masok ga sih');
+  //   e.preventDefault();
+  //   // const response = await fetch(`http://localhost:8000/api/getcvelist?keywordSearch=${keyword}&resultsPerPage=10&startIndex=0`);
+  //   // const cvelist = await response.json();
+  //   console.log(cvelist, cvelist.length);
+  //   router.push(`/cvelist?keywordSearch=${keyword}&resultsPerPage=10&startIndex=0`);
+  //   // gimana caranya kirim cvelist ke ../cvelist/index.js?
+  // }
 
   const handleKeyDownSearch = (event, keyword) => {
     if (event.key === "Enter") {
+      if (router.pathname === "/cvelist") {
+        console.log("aaaa")
+        router.replace(`/cvelist?keywordSearch=${keyword}`);
+        setTimeout(() => {
+          router.reload(); // Reload the page
+        }, 200);  
+      }
+      else{
+        console.log('ni keyword', keyword);
+        router.push(`/cvelist?keywordSearch=${keyword}`);
+      }
       // handleSubmit(event);
-      console.log('ni keyword', keyword);
-      router.push(`/cvelist?keywordSearch=${keyword}&resultsPerPage=10&startIndex=0`);
     }
   }
 
@@ -109,8 +118,6 @@ const Navbar = () => {
       sx={{ width: "100%", background: "white", px: 2, py: 2, }}
     >
 
-
-     
       <TextField
         id="keywordSearch"
         name="keywordSearch"

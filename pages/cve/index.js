@@ -1,4 +1,3 @@
-import * as React from "react";
 import {
   Box,
   Grid,
@@ -15,7 +14,12 @@ import {
   Divider,
   Stack,
   Autocomplete,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
 } from "@mui/material";
+import React, { useCallback, useEffect, useState } from "react";
 import { debounce } from "lodash";
 import { useRouter } from 'next/router';
 import AddIcon from "@mui/icons-material/Add";
@@ -30,20 +34,54 @@ import dayjs, { Dayjs } from 'dayjs';
 import { color } from "@mui/system";
 
 
-
 function factoryclassification() {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const router = useRouter();
   const [startDate, setStartDate] = React.useState(null);
   const [endDate, setEndDate] = React.useState(null);
-  const [CVEID, setCVEID] = React.useState("");
-  const [cvss, setCvss] = React.useState("");
+  const [CVEID, setCVEID] = React.useState(null);
+  const [cvss, setCvss] = React.useState(null);
+  const [cvssV2, setCvssV2] = React.useState(null);
+  const [cvssV3, setCvssV3] = React.useState(null);
   const today = dayjs();
-  const options = ['Low', 'Medium', 'High',];
+  const cvssVersion = ['cvssV2', 'cvssV3'];
+  const [selectedVersion, setSelectedVersion] = useState("");
+  const [cvssOptions, setCvssOptions] = useState([]);
 
-  const handleChange = (event, newValue) => {
+
+
+  const handleVersionChange = (event) => {
+    const version = event.target.value;
+    setSelectedVersion(version);
+  
+    const newCvssOptions = getOptionsForVersion(version);
+
+    setCvssOptions(newCvssOptions);
+  };
+
+  // console.log("halo", selectedVersion, cvss);
+
+  const handleCvssChange = (event) => {
+    const newValue = event.target.value;
     setCvss(newValue);
+    if (selectedVersion === "cvssV2") {
+      setCvssV2(newValue);
+    }
+    else
+      setCvssV3(newValue);
+    // Handle the change of cvss value here
+  };
+
+  const getOptionsForVersion = (version) => {
+    // Example logic, replace with your implementation
+    if (version === "cvssV2") {
+      return ["LOW", "MEDIUM", "HIGH"];
+    } else if (version === "cvssV3") {
+      return ["LOW", "MEDIUM", "HIGH", "CRITICAL"];
+    } else {
+      return []; // Default or handle other cases
+    }
   };
 
   const handleStartDateChange = (newStartValue) => {
@@ -52,11 +90,11 @@ function factoryclassification() {
 
   const handleEndDateChange = (newStopValue) => {
     if (startDate) {
-      const maxEndDate = dayjs(startDate).add(30, 'days');
+      const maxEndDate = dayjs(startDate).add(120, 'days');
       if (dayjs(newStopValue).isAfter(maxEndDate)) {
-        // If the selected EndDate is more than 30 days from startDate, reset it
+        // If the selected EndDate is more than 120 days from startDate, reset it
         setEndDate(null);
-        alert('The range between start date and stop date should not be more than 30 days.');
+        alert('The range between start date and stop date should not be more than 120 days.');
       } else {
         setEndDate(newStopValue);
       }
@@ -67,13 +105,28 @@ function factoryclassification() {
   };
 
   const handleClick = () => {
-    // const cveId = CVEID;
-    // const cvss = options;
-    const startdate = startDate.$d;
-    const enddate = endDate.$d;
-    console.log('param', CVEID, cvss, startdate, enddate);
-    router.push(`/cvelist?cveId=${encodeURIComponent(CVEID)}&cvss=${encodeURIComponent(options)}&startDate=${encodeURIComponent(startDate)}&endDate=${encodeURIComponent(endDate)}`);
+    const formatDate = (date) => date && date.$d.toISOString();
+
+    if ((!startDate && endDate) || (startDate && !endDate)) {
+      alert('Please enter both start date and end date');
+      return;
+    }
+  
+    const queryParams = [
+      CVEID !== null && `cveId=${encodeURIComponent(CVEID)}`,
+      cvssV2 !== null && `cvssV2Severity=${encodeURIComponent(cvssV2)}`,
+      cvssV3 !== null && `cvssV3Severity=${encodeURIComponent(cvssV3)}`,
+      formatDate(startDate) && `pubStartDate=${encodeURIComponent(formatDate(startDate))}`,
+      formatDate(endDate) && `pubEndDate=${encodeURIComponent(formatDate(endDate))}`,
+    ].filter(Boolean).join('&');
+  
+    const url = `/cvelist${queryParams ? `?${queryParams}` : ''}`;
+  
+
+    router.push(url);
   };
+  
+  console.log("cveid", CVEID);
   
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -159,6 +212,7 @@ function factoryclassification() {
                         value={startDate}
                         onChange={handleStartDateChange}
                         maxDate={today}
+                        disabled={CVEID !== null && CVEID !== ""}  
                         renderInput={(params) => (
                           <TextField {...params} size="small" fullWidth/>
                         )}
@@ -172,6 +226,8 @@ function factoryclassification() {
                         value={endDate}
                         onChange={handleEndDateChange}
                         maxDate={today}
+                        // minDate={startDate}
+                        disabled={CVEID !== null && CVEID !== ""}  
                         renderInput={(params) => (
                           <TextField {...params} size="small" fullWidth/>
                         )}
@@ -201,21 +257,50 @@ function factoryclassification() {
                 <Typography sx={{ fontWeight: 600, fontSize:'20px' }}>CVSS</Typography>
                 </Box>
                 
-              
+                <Grid container xs={10}  justifyContent={'space-between'}>
+                  <Grid item xs={5.5} >
+                  <FormControl fullWidth size="small">
+                  <InputLabel id="cvss">Version</InputLabel>
+                    <Select
+                      labelId="version-label"
+                      id="version"
+                      value={selectedVersion}
+                      onChange={handleVersionChange}
+                      
+                      disabled={CVEID !== null && CVEID !== ""}
+                      // label="Select Version"
+                    >
+                      <MenuItem value="cvssV2">cvssV2</MenuItem>
+                      <MenuItem value="cvssV3">cvssV3</MenuItem>
+                      {/* Add other version options as needed */}
+                    </Select>
+                  </FormControl>
+                 
+                  </Grid>
 
-                <Grid item xs={10} >
-                <Autocomplete
-           
-                  options={options}
-                  sx={{ backgroundColor: "white", width: "100%",}}
-                  size="small"
-                  fullWidth
-                  onChange={handleChange}
-                  renderInput={(params) => (
-                    <TextField {...params} size="small"  placeholder="Low"    />
-                  )}
-                />
+                  <Grid item xs={5.5} >
+                  <FormControl fullWidth size="small">
+                  <InputLabel id="cvss">Severity</InputLabel>
+                    <Select
+                      labelId="cvss-label"
+                      id="cvss"
+                      value={cvss}
+                      onChange={handleCvssChange}
+                      
+                     
+                      disabled={CVEID !== null && CVEID !== ""}  
+                    >
+                      {cvssOptions.map((option) => (
+                        <MenuItem key={option} value={option}>
+                          {option}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                  </Grid>
                 </Grid>
+
+               
                 
             
             </Grid>

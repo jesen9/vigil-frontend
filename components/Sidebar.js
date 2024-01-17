@@ -15,7 +15,8 @@ import {
 import { styled, useTheme } from "@mui/material/styles";
 import MuiDrawer from "@mui/material/Drawer";
 import DoubleArrowIcon from "@mui/icons-material/DoubleArrow";
-import CenturyLogo from "../public/static/logo/century.png";
+// import CenturyLogo from "../public/static/logo/century.png"
+import VigilLogo from "../public/static/logo/vigil.png";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import { useRouter } from "next/router";
@@ -23,44 +24,43 @@ import { getToken, deleteToken } from "../utils/token";
 import { Routes } from "./Routes";
 import { BottomRoutes } from "./BottomRoutes";
 
-const drawerWidth = 300;
+const drawerWidth = 250;
 
 const openedMixin = (theme) => ({
   width: drawerWidth,
-  transition: theme.transitions.create("width", {
-    easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.enteringScreen,
-  }),
+  // transition: theme.transitions.create("width", {
+  //   easing: theme.transitions.easing.sharp,
+  //   duration: theme.transitions.duration.enteringScreen,
+  // }),
   overflowX: "hidden",
+  overflowY: "hidden",
 });
 
-const closedMixin = (theme) => ({
-  transition: theme.transitions.create("width", {
-    easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.leavingScreen,
-  }),
-  overflowX: "hidden",
-  width: `calc(${theme.spacing(7)} + 1px)`,
-  [theme.breakpoints.up("sm")]: {
-    width: `calc(${theme.spacing(8)} + 1px)`,
-  },
-});
+// const closedMixin = (theme) => ({
+//   transition: theme.transitions.create("width", {
+//     easing: theme.transitions.easing.sharp,
+//     duration: theme.transitions.duration.leavingScreen,
+//   }),
+//   overflowX: "hidden",
+//   width: `calc(${theme.spacing(7)} + 1px)`,
+//   [theme.breakpoints.up("sm")]: {
+//     width: `calc(${theme.spacing(8)} + 1px)`,
+//   },
+// });
 
 const Drawer = styled(MuiDrawer, {
-  shouldForwardProp: (prop) => prop !== "open",
+  // shouldForwardProp: (prop) => prop !== "open",
 })(({ theme, open }) => ({
   width: drawerWidth,
   // background: '#153C6C',
-  flexShrink: 0,
-  whiteSpace: "nowrap",
-  boxSizing: "border-box",
+  // flexShrink: 0,
+  // whiteSpace: "nowrap",
+  overflowX: "hidden",
+  overflowY: "hidden",
+  // boxSizing: "border-box",
   ...(open && {
     ...openedMixin(theme),
     "& .MuiDrawer-paper": openedMixin(theme),
-  }),
-  ...(!open && {
-    ...closedMixin(theme),
-    "& .MuiDrawer-paper": closedMixin(theme),
   }),
 }));
 
@@ -143,7 +143,7 @@ const Sidebar = () => {
           sx={{
             minHeight: 48,
             justifyContent:  "initial",
-            // justifyContent: sideBarOpen ? "initial" : "center",
+            justifyContent: sideBarOpen ? "initial" : "center",
             px: 2.5,
           }}
         >
@@ -244,45 +244,53 @@ const Sidebar = () => {
       PaperProps={{
         sx: {
           bgcolor: "#8EB4F4",
-          transition: (theme) =>
-            theme.transitions.create("background-color", {
-              easing: theme.transitions.easing.easeOut,
-              duration: theme.transitions.duration.enteringScreen,
-            }),
+          
+          // transition: (theme) =>
+          //   theme.transitions.create("background-color", {
+          //     easing: theme.transitions.easing.easeOut,
+          //     duration: theme.transitions.duration.enteringScreen,
+          //   }),
         },
       }}
     >
-      <DrawerHeader sx={{ py: 3, px: 0 }}>
+      
+      <DrawerHeader sx={{ py: 3, px: 0, }}>
         <Box
           sx={{
-            width: "60px",
-            height: "60px",
-            transform: sideBarOpen ? "scale(1)" : "scale(0.6)",
-            transition: (theme) =>
-              theme.transitions.create("transform", {
-                easing: theme.transitions.easing.easeOut,
-                duration: theme.transitions.duration.complex,
-              }),
-            textAlign: "center",
+            width: "80px",
+            height: "80px",
+            // transform: sideBarOpen ? "scale(1)" : "scale(0.6)",
+            // transition: (theme) =>
+            //   theme.transitions.create("transform", {
+            //     easing: theme.transitions.easing.easeOut,
+            //     duration: theme.transitions.duration.complex,
+            //   }),
+            
           }}
         >
-          {/* <Image
-            src={CenturyLogo}
-            width="100%"
-            height="100%"
+          <Image
+            src="/static/logo/vigil.png"
+            width={100}
+            height={100}
+            layout="responsive"
             alt="Sidebar Logo"
-          /> */}
+            priority
+          />
+
+          
         </Box>
+       
       </DrawerHeader>
+
       <div>
         {Routes.map((item, key) => (
           <MenuItem key={key} item={item} />
         ))}
-        <ListFooter>
+        {/* <ListFooter>
           {BottomRoutes.map((item, key) => (
             <MenuItem key={key} item={item} />
           ))}
-        </ListFooter>
+        </ListFooter> */}
       </div>
       <DrawerFooter>
         {sideBarOpen && (
