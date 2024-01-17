@@ -1,157 +1,322 @@
-import * as React from "react";
-import {
-  Box,
-  Grid,
-  Table,
-  TableRow,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TablePagination, // Import TablePagination
-  Typography,
-  TextField,
-  Button,
-  Paper,
-  Divider,
-  Stack,
-  Autocomplete,
-  List,
-  ListItem,
-  ListItemText,
-  ListItemButton,
-  Pagination,
-} from "@mui/material";
-import { debounce } from "lodash";
-import { useRouter } from 'next/router';
-import api from "../../services/api"
-import AddIcon from "@mui/icons-material/Add";
-import ViewListIcon from "@mui/icons-material/ViewList";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
-import SearchIcon from "@mui/icons-material/Search";
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import dayjs, { Dayjs } from 'dayjs';
-import { color } from "@mui/system";
+import React from 'react';
+import { makeStyles } from '@material-ui/core/styles';
+// import { makeStyles } from '@mui/styles';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+// import HighlightedCode from 'docs/src/modules/components/HighlightedCode';
+import Grid from '@material-ui/core/Grid';
+import Typography from '@material-ui/core/Typography';
+import Button from '@material-ui/core/Button';
+import Popper from '@material-ui/core/Popper';
+import Paper from '@material-ui/core/Paper';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import Switch from '@material-ui/core/Switch';
+import TextField from '@material-ui/core/TextField';
 
+const useStyles = makeStyles((theme) => ({
+  root: {
+    flexGrow: 1,
+  },
+  scrollContainer: {
+    height: 400,
+    overflow: 'auto',
+    marginBottom: theme.spacing(3),
+  },
+  scroll: {
+    position: 'relative',
+    width: '230%',
+    backgroundColor: theme.palette.background.paper,
+    height: '230%',
+  },
+  legend: {
+    marginTop: theme.spacing(2),
+    maxWidth: 300,
+  },
+  paper: {
+    maxWidth: 400,
+    overflow: 'auto',
+  },
+  select: {
+    width: 200,
+  },
+  popper: {
+    zIndex: 1,
+    '&[x-placement*="bottom"] $arrow': {
+      top: 0,
+      left: 0,
+      marginTop: '-0.9em',
+      width: '3em',
+      height: '1em',
+      '&::before': {
+        borderWidth: '0 1em 1em 1em',
+        borderColor: `transparent transparent ${theme.palette.background.paper} transparent`,
+      },
+    },
+    '&[x-placement*="top"] $arrow': {
+      bottom: 0,
+      left: 0,
+      marginBottom: '-0.9em',
+      width: '3em',
+      height: '1em',
+      '&::before': {
+        borderWidth: '1em 1em 0 1em',
+        borderColor: `${theme.palette.background.paper} transparent transparent transparent`,
+      },
+    },
+    '&[x-placement*="right"] $arrow': {
+      left: 0,
+      marginLeft: '-0.9em',
+      height: '3em',
+      width: '1em',
+      '&::before': {
+        borderWidth: '1em 1em 1em 0',
+        borderColor: `transparent ${theme.palette.background.paper} transparent transparent`,
+      },
+    },
+    '&[x-placement*="left"] $arrow': {
+      right: 0,
+      marginRight: '-0.9em',
+      height: '3em',
+      width: '1em',
+      '&::before': {
+        borderWidth: '1em 0 1em 1em',
+        borderColor: `transparent transparent transparent ${theme.palette.background.paper}`,
+      },
+    },
+  },
+  arrow: {
+    position: 'absolute',
+    fontSize: 7,
+    width: '3em',
+    height: '3em',
+    '&::before': {
+      content: '""',
+      margin: 'auto',
+      display: 'block',
+      width: 0,
+      height: 0,
+      borderStyle: 'solid',
+    },
+  },
+}));
 
-function factoryclassification() {
-  const router = useRouter();
-  const [cvelist, setCvelist] = React.useState([]);
-  const cveId = router.query.cveId 
-  const cvssV3Severity = router.query.cvss
-  const cweId = router.query.cweId 
-  const pubStartDate = router.query.startdate
-  const pubEndDate = router.query.enddate
-  const [page, setPage] = React.useState(1);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+export default function ScrollPlayground() {
+  const anchorRef = React.useRef(null);
+  const [arrowRef, setArrowRef] = React.useState(null);
 
-  const debounceMountCVEList = useCallback(
-    debounce(mountCVEList, 400),
-    []
-  );
+  const [arrow, setArrow] = React.useState(false);
+  const [disablePortal, setDisablePortal] = React.useState(false);
+  const [flip, setFlip] = React.useState(true);
+  const [open, setOpen] = React.useState(false);
+  const [placement, setPlacement] = React.useState('bottom');
+  const [preventOverflow, setPreventOverflow] = React.useState('scrollParent');
 
-  const handleStartDateChange = (newStartValue) => {
-    setStartDate(newStartValue);
+  const handleClickButton = () => {
+    setOpen((prevOpen) => !prevOpen);
   };
 
-  async function mountCVEList() {
-    try {
-        const queryParams = {
-            cpename,
-            cveId,
-            cvssV3Metrics,
-            cvssV3Severity,
-            cweId,
-            hasCertAlerts,
-            hasCertNotes,
-            hasKev,
-            hasOval,
-            isVulnerable,
-            keywordExactMatch,
-            keywordSearch,
-            virtualMatchString,
-            noRejected,
-            resultsPerPage,
-            startIndex,
-            sourceIdentifier,
-          };
-
-      setIsModalLoading(true);
-
-      const filteredParams = Object.fromEntries(
-        Object.entries(queryParams).filter(([key, value]) => value !== undefined && value !== null)
-      );
-
-      const queryString = new URLSearchParams(filteredParams).toString();
-
-      const getcveList = await api.getCVEList(queryString)
-      const { data } = getAllProcessType;
-      console.log('data', data)
-      setCvelist(data.data)
-      setIsModalLoading(false);
-      //   setIsModalAddProcessTypeOpen(false);
-    } catch (error) {
-      setIsModalLoading(true);
-      displayToast("error", "Failed to Fetch Factory Details Data");
-      console.log(error);
+  const centerScroll = (element) => {
+    if (!element) {
+      return;
     }
-  }
+
+    const container = element.parentElement;
+    container.scrollTop = element.clientHeight / 4;
+    container.scrollLeft = element.clientWidth / 4;
+  };
+
+  const classes = useStyles();
+
+  const jsx = `
+  <Popper
+    placement="${placement}"
+    disablePortal={${disablePortal}}
+    modifiers={{
+      flip: {
+        enabled: ${flip},
+      },
+      preventOverflow: {
+        enabled: ${preventOverflow !== 'disabled'},
+        boundariesElement: '${preventOverflow === 'disabled' ? 'scrollParent' : preventOverflow}',
+      },
+      arrow: {
+        enabled: ${arrow},
+        element: arrowRef,
+      },
+    }}
+  >
+  `;
+  const id = open ? 'scroll-playground' : null;
 
   return (
-    <Box sx={{ width: "100%", p: 3 }}>
-      <Grid container justifyContent="space-between">
-        <Grid item xs={4}>
-          <Typography variant="h5" sx={{ fontWeight: 600, mt: 0.5 }}>
-            CVE LIST 
+    <div className={classes.root}>
+      <div className={classes.scrollContainer}>
+        <Grid
+          className={classes.scroll}
+          container
+          alignItems="center"
+          justify="center"
+          ref={centerScroll}
+        >
+          <div>
+            <Button
+              ref={anchorRef}
+              variant="contained"
+              onClick={handleClickButton}
+              aria-describedby={id}
+            >
+              Toggle Popper
+            </Button>
+            <Typography className={classes.legend}>
+              Scroll around this container to experiment with flip and preventOverflow modifiers.
+            </Typography>
+            <Popper
+              id={id}
+              open={open}
+              anchorEl={anchorRef.current}
+              placement={placement}
+              disablePortal={disablePortal}
+              className={classes.popper}
+              modifiers={{
+                flip: {
+                  enabled: flip,
+                },
+                arrow: {
+                  enabled: arrow,
+                  element: arrowRef,
+                },
+                preventOverflow: {
+                  enabled: preventOverflow !== 'disabled',
+                  boundariesElement:
+                    preventOverflow === 'disabled' ? 'scrollParent' : preventOverflow,
+                },
+              }}
+            >
+              {arrow ? <span className={classes.arrow} ref={setArrowRef} /> : null}
+              <Paper className={classes.paper}>
+                <DialogTitle>{"Use Google's location service?"}</DialogTitle>
+                <DialogContent>
+                  <DialogContentText>Let Google help apps determine location.</DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                  <Button onClick={handleClickButton} color="primary">
+                    Disagree
+                  </Button>
+                  <Button onClick={handleClickButton} color="primary">
+                    Agree
+                  </Button>
+                </DialogActions>
+              </Paper>
+            </Popper>
+          </div>
+        </Grid>
+      </div>
+      <Grid container spacing={2}>
+        <Grid item xs={12} sm={6}>
+          <Typography gutterBottom variant="h6">
+            Appearance
           </Typography>
-        </Grid>
-        </Grid>
-
-        <Divider sx={{ my: 2 }} />
-       
-        <Grid container justifyContent="space-between">
-        <List sx={{ mb: 2 }} >
-        {cvelist.map(({ cveid, description, publishedat, updatedat, cvssscore }) => (
-          <Paper elevation={3} sx={{ backgroundColor: 'white', mb: 2, padding: 2 }} key={cveid}>
-            <ListItemButton  onClick={() => router.push(`/cvelist/${cveid}`)} >
-              <ListItemText
-                primary={cveid}
-                secondary={description}
-                primaryTypographyProps={{ variant: 'h6' }}  // Increase font size
-                secondaryTypographyProps={{ variant: 'body1' }}  // Increase font size
+          <div>
+            <TextField
+              margin="normal"
+              className={classes.select}
+              label="Placement"
+              select
+              InputLabelProps={{ id: 'scroll-playground-placement-label' }}
+              SelectProps={{
+                native: true,
+                inputProps: { 'aria-labelledby': 'scroll-playground-placement-label' },
+              }}
+              value={placement}
+              onChange={(event) => {
+                setPlacement(event.target.value);
+              }}
+            >
+              <option value="top-start">top-start</option>
+              <option value="top">top</option>
+              <option value="top-end">top-end</option>
+              <option value="left-start">left-start</option>
+              <option value="left">left</option>
+              <option value="left-end">left-end</option>
+              <option value="right-start">right-start</option>
+              <option value="right">right</option>
+              <option value="right-end">right-end</option>
+              <option value="bottom-start">bottom-start</option>
+              <option value="bottom">bottom</option>
+              <option value="bottom-end">bottom-end</option>
+            </TextField>
+          </div>
+          <FormControlLabel
+            control={
+              <Switch
+                checked={disablePortal}
+                onChange={(event) => {
+                  setDisablePortal(event.target.checked);
+                }}
+                value="disablePortal"
               />
-               
-            </ListItemButton>
-            <Divider />
-            <ListItem>
-                <Grid container spacing={2}>
-                <Grid item xs={12} md={6}>
-                    <ListItemText primary="Published At" secondary={publishedat} />
-                </Grid>
-                <Grid item xs={12} md={6}>
-                    <ListItemText primary="Updated At" secondary={updatedat} />
-                </Grid>
-                <Grid item xs={12} md={6}>
-                    <ListItemText primary="CVSS Score" secondary={cvssscore} />
-                </Grid>
-                </Grid>
-            </ListItem>
-          </Paper>
-        ))}
-      </List>
-
-
-    </Grid>
-    <Stack spacing={2} alignItems={'center'}>
-      <Pagination count={10} page={page}  color="primary" size="large" />
-     
-    </Stack>
-      <Divider sx={{ my: 2 }} />
-      
-    </Box>
+            }
+            label="Disable portal (the children stay within it's parent DOM hierarchy)"
+          />
+        </Grid>
+        <Grid item xs={12} sm={6}>
+          <Typography gutterBottom variant="h6">
+            Modifiers (options from Popper.js)
+          </Typography>
+          <div>
+            <TextField
+              margin="normal"
+              className={classes.select}
+              label="Prevent overflow"
+              select
+              InputLabelProps={{ id: 'scroll-playground-overflow-label' }}
+              SelectProps={{
+                native: true,
+                inputProps: { 'aria-labelledby': 'scroll-playground-overflow-label' },
+              }}
+              value={preventOverflow}
+              onChange={(event) => {
+                setPreventOverflow(event.target.value);
+              }}
+            >
+              <option value="disabled">disabled</option>
+              <option value="scrollParent">scrollParent</option>
+              <option value="viewport">viewport</option>
+              <option value="window">window</option>
+            </TextField>
+          </div>
+          <FormControlLabel
+            control={
+              <Switch
+                checked={flip}
+                onChange={(event) => {
+                  setFlip(event.target.checked);
+                }}
+                value="flip"
+              />
+            }
+            label={[
+              'Flip',
+              '(flip the popper’s placement when it starts to overlap its reference element)',
+            ].join(' ')}
+          />
+          <FormControlLabel
+            control={
+              <Switch
+                checked={arrow}
+                onChange={(event) => {
+                  setArrow(event.target.checked);
+                }}
+                value="arrow"
+              />
+            }
+            label="Arrow"
+          />
+        </Grid>
+      </Grid>
+      {/* <HighlightedCode code={jsx} language="jsx" /> */}
+    </div>
   );
 }
-
-export default factoryclassification;
