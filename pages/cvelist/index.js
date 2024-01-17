@@ -143,7 +143,7 @@ const factoryclassification= () => {
 
         <Grid item xs={4} sm={4} md={4} lg={4} sx={{ textAlign: "center" }}>
           <Typography variant="h5" sx={{ fontWeight: 600, mt: 0.5 }}>
-            CVE Details
+            CVE List
           </Typography>
         </Grid>
         <Grid item xs={4} sm={4} md={4} lg={4}></Grid>

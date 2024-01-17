@@ -283,7 +283,7 @@ const handleTooltipClose = () => {
       {/* {Array.isArray(cveDetails) && cveDetails.map((cvedetail, index) => ( */}
   <Grid  container component={Paper} sx={{ p: 2, marginBottom: 3 ,}} justifyContent={'space-between'} rowSpacing={1} elevation={7}>
     <Grid item>
-      <Typography variant="h4" sx={{ fontWeight: 600, mt: 0.5, color:"#8EB4F4"  }}>
+      <Typography variant="h4" sx={{ fontWeight: 500, mt: 0.5, color:"#8EB4F4"  }}>
         {cveDetails.cveid}
       </Typography>
       <Divider sx={{ my: 2 }} />
@@ -319,8 +319,8 @@ const handleTooltipClose = () => {
             sx={{ my: 1 }}
        >
            <Grid container item xs={4} alignItems="center"  >
-             <Typography variant="h5" sx={{ fontWeight: 600}}>
-               CVSS
+             <Typography variant="h6" sx={{ fontWeight: 600}}>
+               CVSS Score
              </Typography>
           
            </Grid>
@@ -336,10 +336,16 @@ const handleTooltipClose = () => {
                 Version String
               </TableCell>
               <TableCell align="center" sx={{ fontWeight: "600" }}>
+                Base Severity
+              </TableCell>
+              <TableCell align="center" sx={{ fontWeight: "600" }}>
                 Base Score
               </TableCell>
               <TableCell align="center" sx={{ fontWeight: "600" }}>
-                Base Severity
+                Exploitability Score
+              </TableCell>
+              <TableCell align="center" sx={{ fontWeight: "600" }}>
+                Impact Score
               </TableCell>
             </TableHead>
               <TableBody>
@@ -380,9 +386,7 @@ const handleTooltipClose = () => {
                     </LightTooltip>
                       
                     </TableCell>
-                    <TableCell align="center">
-                      {cvss.baseScore}
-                    </TableCell>
+                   
                     <TableCell align="center"   >
                       <Typography variant="subtitle3"
                       sx={{ 
@@ -396,6 +400,15 @@ const handleTooltipClose = () => {
                       {cvss.baseSeverity}
                       </Typography>
                       
+                    </TableCell>
+                    <TableCell align="center">
+                      {cvss.baseScore}
+                    </TableCell>
+                    <TableCell align="center">
+                      {cvss.exploitabilityScore}
+                    </TableCell>
+                    <TableCell align="center">
+                      {cvss.impactScore}
                     </TableCell>
                   </TableRow>
                 ))}
@@ -416,9 +429,9 @@ const handleTooltipClose = () => {
       columnSpacing={{ xs: 1, sm: 2, md: 3 }}
       sx={{ my: 1 }}
       >
-           <Grid container item xs={4} alignItems="center"  >
-             <Typography variant="h5" sx={{ fontWeight: 600 }}>
-               CWE IDs
+           <Grid container item xs={6} alignItems="center"  >
+             <Typography variant="h6" sx={{ fontWeight: 600 }}>
+               Weakness Enumeration (CWE) IDs
              </Typography>
           
            </Grid>
@@ -461,9 +474,9 @@ const handleTooltipClose = () => {
             columnSpacing={{ xs: 1, sm: 2, md: 3 }}
             sx={{ my: 1 }}
        >
-           <Grid container item xs={4} alignItems="center"  >
-             <Typography variant="h5" sx={{ fontWeight: 600}}>
-               CPE
+           <Grid container item xs={6} alignItems="center"  >
+             <Typography variant="h6" sx={{ fontWeight: 600}}>
+               Vendor and Product Affected (CPE)
              </Typography>
           
            </Grid>
@@ -541,8 +554,8 @@ const handleTooltipClose = () => {
             sx={{ my: 1 }}
         >
           <Grid container item xs={4} alignItems="center" >
-             <Typography variant="h5" sx={{ fontWeight: 600}}>
-               POC
+             <Typography variant="h6" sx={{ fontWeight: 600}}>
+               Proof of Concept
              </Typography>
           
            </Grid>
@@ -553,7 +566,7 @@ const handleTooltipClose = () => {
             <Card key={index} sx={{ borderRadius: 3, mb: 3 }}>
              
                 <CardContent sx={{ overflow: "auto" }}>
-                  <Typography variant="h5" component="div" sx={{mb:1}}>
+                  <Typography variant="subtitle1" component="div" sx={{mb:1, fontWeight:'500'}}>
                     {poc.title}
                   </Typography>
                   <Divider/>

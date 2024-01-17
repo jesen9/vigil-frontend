@@ -201,7 +201,7 @@ const ProcessType = () => {
                 size="small"
                 variant="outlined"
                 fullWidth
-                placeholder="Search by ID / Name"
+                placeholder="Search by CVE ID"
                 sx={{ backgroundColor: "white" }}
                 value={inputSearchProcessType}
                 onChange={(e) => setInputSearchProcessType(e.target.value)}
@@ -223,17 +223,6 @@ const ProcessType = () => {
             </Button>
           </Stack>
         </Grid>
-
-        <Grid container item xs={2} justifyContent={"flex-end"}>
-          <Button
-            variant="contained"
-            startIcon={<AddIcon />}
-            size="md"
-            onClick={() => setIsModalAddProcessTypeOpen(true)}
-          >
-            Add
-          </Button>
-        </Grid>
       </Grid>
 
       <Paper>
@@ -246,9 +235,6 @@ const ProcessType = () => {
                 </TableCell>
                 <TableCell align="center" sx={{ fontWeight: "600" }}>
                   Notes
-                </TableCell>
-                <TableCell align="center" sx={{ fontWeight: "600" }}>
-                  Action
                 </TableCell>
               </TableRow>
             </TableHead>
