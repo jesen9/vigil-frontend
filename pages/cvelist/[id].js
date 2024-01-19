@@ -605,7 +605,7 @@ const handleTooltipClose = () => {
          
         
 
-      <ScrollToTopButton />
+      <ScrollToTopButton value={cveDetails}/>
     </Box>
   );
 }

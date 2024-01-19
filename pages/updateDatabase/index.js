@@ -63,7 +63,7 @@ import {
         const { data } = updateDatabase;
         console.log('dataaaa', data)
   
-        if (data.cvelist.length === 0){
+        if (data.length === 0){
           setIsModalLoading(false);
           displayToast("info", "Data Not Found");
           setNoDataFound(true);

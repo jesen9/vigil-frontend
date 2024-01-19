@@ -8,15 +8,17 @@ import {
   Grid,
   Divider,
   Button,
+  Typography,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
-
+import Link from "../utils/link";
 import { useRouter } from "next/router";
 import Image from "next/image";
-
+import vigil from "../public/static/logo/vigil.png"
 import api from "../services/api";
 import { setToken, getToken } from "../utils/token";
 import useToast from "../utils/toast";
+import { setStorage, getStorage, deleteStorage } from "../utils/storage";
 // import CenturyLogo from "../public/static/logo/century.png";
 
 const Login = () => {
@@ -31,16 +33,28 @@ const Login = () => {
     setLoginValue({ ...loginValue, [event.target.name]: event.target.value });
   };
 
-  useEffect(() => {
-    console.log(getToken("token"));
-    if (getToken("token")) {
-      router.push("/");
-    }
-  }, []);
+  // useEffect(() => {
+  //   console.log(getToken("token"));
+  //   if (getToken("token")) {
+  //     router.push("/");
+  //   }
+  // }, []);
+
+  const validateEmail = (email) => {
+    // Regular expression for a basic email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
 
   async function onFinish() {
     try {
-      setToken("token", "jwtToken");
+      // setToken("token", "jwtToken");
+
+      // if (!validateEmail(loginValue.email)) {
+      //   displayToast("error", "invalid Email");
+      //   setLoading((loading = false));
+      //   return;
+      // }
       // const postLoginData = await api.loginApi(loginValue);
       // setToken("token", postLoginData.data.data.token);
       router.replace("/");
@@ -49,13 +63,13 @@ const Login = () => {
     }
   }
 
-  if (typeof window !== "undefined" && getToken("token")) {
-    return null;
-  }
+  // if (typeof window !== "undefined" && getToken("token")) {
+  //   return null;
+  // }
   return (
     <React.Fragment
       sx={{
-        backgroundColor: "#F5F5F5",
+        backgroundColor: "#8EB4F4",
         backgroundSize: "cover",
         backgroundRepeat: "no-repeat",
         width: "100%",
@@ -70,7 +84,7 @@ const Login = () => {
         direction="column"
         alignItems="center"
         justifyContent="center"
-        style={{ minHeight: "100vh" }}
+        style={{ minHeight: "100vh", backgroundColor: "#8EB4F4",}}
       >
         <Grid
           item
@@ -93,7 +107,7 @@ const Login = () => {
               <Stack component="form" spacing={2} noValidate>
                 <Box display={"flex"} justifyContent={"center"}>
                   <Image
-                    // src={CenturyLogo}
+                    src={vigil}
                     width={100}
                     height={100}
                     alt="login logo"
@@ -122,6 +136,12 @@ const Login = () => {
                 >
                   Log In
                 </Button>
+                <Box display="flex" justifyContent="center">
+                  <Typography>Don&apos;t have an account?</Typography>
+                  <Link  href="/register" sx={{ textDecoration: "none",  }}>
+                    <Typography variant="subtitle2" sx={{ml:1}}>Sign Up</Typography>
+                  </Link>
+                </Box>
               </Stack>
             </CardContent>
           </Card>

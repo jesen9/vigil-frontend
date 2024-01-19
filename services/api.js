@@ -3,7 +3,7 @@ import { getToken } from "../utils/token";
 
 const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_BASE_API_URL + `/api`,
-  timeout: 10000,
+  timeout: 1000000,
 });
 
 const loginApi = async (loginData) => {
@@ -19,25 +19,46 @@ const getCVEList = async (params, resultsPerPage, startIndex) => {
     resultsPerPage,
     startIndex,
   };
+
   console.log("requestParams", requestParams);
-  return await api.get(`/getcvelist`, {
+  return await api.get(`/get-cve-list`, {
     params: requestParams,
   });
 };
 
 const getCVEDetails = async (cveId) => {
   return await api.get(
-    `/getcvedetails?cveId=${cveId}`
+    `/get-cve-details?cveId=${cveId}`
   );
 };
 
 const getUpdateDatabase = async () => {
   return await api.get(
-    `/updatedatabase`
+    `/update-database`
   );
 };
 
+const insertNotes = async (payloadNotes) => {
+  return await api.post("/insert-notes", payloadNotes);
+};
+
+const getNotes = async (cveId) => {
+  return await api.get(
+    `/get-notes?veId=${cveId}`
+  );
+};
+
+const deleteNotes = async (id) => {
+  return await api.get(
+    `/delete-notes/{id}`
+  );
+};
+
+
 export default {
+  deleteNotes,
+  getNotes,
+  insertNotes,
   getUpdateDatabase,
   loginApi,
   getCVEList,

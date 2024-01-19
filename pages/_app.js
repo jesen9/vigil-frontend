@@ -62,14 +62,15 @@ const MyApp = ({ Component, emotionCache = clientSideEmotionCache, pageProps, ro
             />
             <meta name="googlebot" content="noindex" />
             <meta name="robots" content="noindex" />
-            <title>React Next Base</title>
+            <title>Vigil</title>
           </Head>
 
           <Provider store={store}>
             <ThemeConfig>
               <Toaster position="top-center" reverseOrder={false} gutter={8} />
-              {router.pathname === "/login" ||
-              (typeof window !== "undefined" && !getToken("token")) ? (
+              {router.pathname === "/login" || router.pathname === "/register"
+              // (typeof window !== "undefined" && !getToken("token")) 
+              ? (
                 <Component {...pageProps} />
               ) : (
                 <Box display={"flex"}>

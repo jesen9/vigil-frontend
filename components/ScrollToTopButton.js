@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { IconButton, Fab, Paper, Button, Arrow, Box, Tooltip,  Fade, TextField, Dialog, DialogActions, DialogContent, Popper,DialogContentText, DialogTitle, Drawer, List, ListItem, ListItemIcon, ListItemText, IconButt } from '@mui/material';
+import { IconButton, Fab, Paper, Button, Typography, Arrow, Box, Tooltip,  Fade, TextField, Dialog, DialogActions, DialogContent, Popper,DialogContentText, DialogTitle, Drawer, List, ListItem, ListItemIcon, ListItemText, IconButt } from '@mui/material';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import NotesIcon from '@mui/icons-material/Notes'; 
 import MenuIcon from '@mui/icons-material/Menu';
@@ -11,11 +11,13 @@ import NoteIcon from '@mui/icons-material/Note';
 import DescriptionIcon from '@mui/icons-material/Description';// Assuming you have a Notes icon
 import Draggable from 'react-draggable';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import { setStorage, getStorage, deleteStorage } from "../utils/storage";
 
 
-const ScrollToTopButton = ({children}) => {
+const ScrollToTopButton = ({value}) => {
   // const classes = useStyles();
   const [open, setOpen] = useState(false);
+  const userID = getStorage("user_id");
   const [anchorEl, setAnchorEl] = useState(null);
   const [notes, setNotes] = useState('');
   const canBeOpen = open && Boolean(anchorEl);
@@ -23,7 +25,7 @@ const ScrollToTopButton = ({children}) => {
   const hasNotesContent = notes !== null && notes !== "";
   // const classes = useStyles();
 
-
+  
 
   const [isVisible, setIsVisible] = useState(false);
 
@@ -50,6 +52,7 @@ const ScrollToTopButton = ({children}) => {
   };
 
   const handleClick = (event) => {
+    console.log('cvedetails', value)
     setAnchorEl(event.currentTarget);
     setOpen((previousOpen) => !previousOpen);
   };
@@ -63,6 +66,7 @@ const ScrollToTopButton = ({children}) => {
     console.log('Notes saved:', notes);
     setOpen(false);
   };
+
 
 
   return (
@@ -79,7 +83,7 @@ const ScrollToTopButton = ({children}) => {
           Note
         </Fab>
     
-      
+      {userID ?(
       <Popper id={id} open={open} anchorEl={anchorEl} transition 
       >
         {({ TransitionProps }) => (
@@ -114,6 +118,38 @@ const ScrollToTopButton = ({children}) => {
           </>
         )}
       </Popper>
+
+      ) : (
+        <Popper id={id} open={open} anchorEl={anchorEl} transition 
+      >
+        {({ TransitionProps }) => (
+          <>
+            
+            <Fade {...TransitionProps} timeout={350}>
+              <Paper>
+              <Box sx={{ p: 2, width: '300px' }}>
+             
+              <Typography variant="body2" color="text.secondary" sx={{mb:1}}>
+                Feel free to explore this feature by logging in!
+              </Typography>
+
+                <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                  <Button
+                    color="primary"
+                    variant="contained"
+                    onClick={() => router.push(`/login`)}
+                  >
+                    Login
+                  </Button>
+                </Box>
+              </Box>
+              </Paper>
+            
+            </Fade>
+          </>
+        )}
+      </Popper>
+      )}
 
     </div>
   );

@@ -11,6 +11,8 @@ import {
   Typography,
   TableBody,
   TextField,
+  Card,
+  CardContent,
   IconButton,
   Button,
   Paper,
@@ -27,9 +29,11 @@ import {
   AlertTitle,
   CircularProgress,
   Pagination,
+  CardActions,
 } from "@mui/material";
 import { useRouter } from "next/router";
 import useToast from "../../utils/toast";
+import { setStorage, getStorage, deleteStorage } from "../../utils/storage";
 import AddIcon from "@mui/icons-material/Add";
 import ModalWrapper from "../../components/ModalWrapper";
 import ModalInputWrapper from "../../components/ModalInputWrapper";
@@ -51,6 +55,7 @@ import { debounce, delay, isNull, isUndefined } from "lodash";
 
 const ProcessType = () => {
   const router = useRouter();
+  const userID = getStorage("user_id");
   // const accessList = getStorage("access_list");
   const [displayToast] = useToast();
   const [isModalLoading, setIsModalLoading] = useState(false);
@@ -157,23 +162,6 @@ const ProcessType = () => {
     }
   };
 
-  /////////////////////////// GET PROCESS TYPE BY ID ///////////////////////////
-  const debounceMountProcessTypeById = useCallback(
-    debounce(mountProcessTypeById, 400),
-    []
-  );
-  const [processTypeById, setProcessTypeById] = useState("");
-
-  async function mountProcessTypeById(id) {
-    try {
-      const getProcessTypeById = await processType.getProcessTypeById(id);
-      const { data } = getProcessTypeById.data;
-      setProcessTypeById(data[0]);
-    } catch (error) {
-      displayToast("error", "Failed to Fetch Data");
-      console.log(error);
-    }
-  }
 
   // ON BEGINING //
   useEffect(() => {
@@ -193,6 +181,8 @@ const ProcessType = () => {
 
       <Divider sx={{ my: 2 }} />
 
+      {userID ? (
+        <>
       <Grid container justifyContent={"space-between"} sx={{ my: 2 }}>
         <Grid container item xs={4}>
           <Stack direction="row" spacing={2}>
@@ -236,6 +226,9 @@ const ProcessType = () => {
                 <TableCell align="center" sx={{ fontWeight: "600" }}>
                   Notes
                 </TableCell>
+                <TableCell align="center" sx={{ fontWeight: "600" }}>
+                  Action
+                </TableCell>
               </TableRow>
             </TableHead>
 
@@ -249,6 +242,35 @@ const ProcessType = () => {
                     <TableCell align="center">
                       {processTypeItem.process_type_name}
                     </TableCell>
+                    <TableCell align="center">
+                          <Box>
+                            <Grid
+                              container
+                              spacing={1}
+                              direction="row"
+                              justifyContent="center"
+                            >
+                              <Grid item>
+                                <Button
+                                  size="small"
+                                  variant="contained"
+                                >
+                                  <EditIcon />
+                                </Button>
+                              </Grid>
+                              <Grid item>
+                                <Button
+                                
+                                  size="small"
+                                  variant="contained"
+                                  color="error"
+                                >
+                                  <DeleteIcon />
+                                </Button>
+                              </Grid>
+                            </Grid>
+                          </Box>
+                        </TableCell>
                     <TableCell align="center">
                       <Box>
                         <Grid
@@ -288,6 +310,60 @@ const ProcessType = () => {
           </Table>
         </TableContainer>
       </Paper>
+      </>
+        )  : (
+
+          <Grid
+          container
+          spacing={0}
+          direction="column"
+          alignItems="center"
+          justifyContent="center"
+          style={{ minHeight: "50vh",}}
+        >
+          <Grid
+          item
+          xs={3}
+          sx={{
+            zIndex: "5",
+          }}
+        >
+          <Card
+            variant="outlined"
+            sx={{
+              width: "380px",
+              background: "#FFFFFF",
+              boxShadow: "0px 2px 10px rgba(0, 0, 0, 0.05)",
+              borderRadius: "12px",
+              padding: "10px 0px",
+            }}
+          >
+            <CardContent
+              sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                
+              }}
+            >
+              <Typography variant="body2" color="text.secondary" sx={{mb:3}}>
+                Feel free to explore this feature by logging in!
+              </Typography>
+              
+                <Button
+                  color="primary"
+                  variant="contained"
+                  onClick={() => router.push(`/login`)}
+                >
+                  Login
+                </Button>
+           
+            </CardContent>
+          </Card>
+        </Grid>
+        </Grid>
+        )}
 
       {/* ------------------------------------ MODAL LOADING ------------------------------------ */}
 

@@ -142,7 +142,7 @@ function factoryclassification() {
       <Grid container justifyContent="space-between">
         <Grid item xs={4}>
           <Typography variant="h5" sx={{ fontWeight: 600, mt: 0.5 }}>
-            CVE FILTERING
+            CVE Search
           </Typography>
         </Grid>
       </Grid>
@@ -150,6 +150,7 @@ function factoryclassification() {
       <Divider sx={{ my: 2 }} />
       <Paper elevation={3}>
        
+    
      
         <Grid
                 container

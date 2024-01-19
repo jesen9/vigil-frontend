@@ -91,11 +91,11 @@ const Sidebar = () => {
   const router = useRouter();
   const [sideBarOpen, setSidebarOpen] = useState(true);
 
-  useEffect(() => {
-    if (!getToken("token")) {
-      changeRoute("/login");
-    }
-  });
+  // useEffect(() => {
+  //   if (!getToken("token")) {
+  //     changeRoute("/login");
+  //   }
+  // });
 
   function changeRoute(route) {
     router.push(`${route}`);
@@ -288,11 +288,11 @@ const Sidebar = () => {
         {Routes.map((item, key) => (
           <MenuItem key={key} item={item} />
         ))}
-        {/* <ListFooter>
+        <ListFooter>
           {BottomRoutes.map((item, key) => (
             <MenuItem key={key} item={item} />
           ))}
-        </ListFooter> */}
+        </ListFooter>
       </div>
       {/* <DrawerFooter>
         {sideBarOpen && (

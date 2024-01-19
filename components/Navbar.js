@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Box, IconButton, TextField, InputAdornment } from "@mui/material";
+import { Box, IconButton, TextField, InputAdornment, Button, Divider } from "@mui/material";
 import jwt_decode from "jwt-decode";
 import { useRouter } from 'next/router';
 import { setUser } from "../redux/actions/userAction";
 import { getToken } from "../utils/token";
 import SearchIcon from '@mui/icons-material/Search';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import { setStorage, getStorage, deleteStorage } from "../utils/storage";
 
 import NotificationIcon from "./NotificationIcon";
 import NotificationList from "./NotificationList";
@@ -35,6 +36,7 @@ const Navbar = () => {
   const [unreadNotifCount, setUnreadNotifCount] = useState(3);
   const [anchor, setAnchor] = useState(null);
   const [notifMenuIsOpen, setNotifMenuIsOpen] = useState(false);
+  const userID = getStorage("user_id");
 
   function setUserData() {
     const token = getToken("token");
@@ -114,7 +116,7 @@ const Navbar = () => {
   return (
     <Box
       display={"flex"}
-      justifyContent={"flex-end"}
+      justifyContent={"space-between"}
       sx={{ width: "100%", background: "white", px: 2, py: 2, }}
     >
 
@@ -136,16 +138,28 @@ const Navbar = () => {
             </InputAdornment>
           ),
         }}
+
+
       />
+      {userID ? (
+        // User is logged in, show username and user icon
+        <>
+          <Divider orientation="vertical" sx={{ mx: 2, height: 30 }} />
+          <Box display="flex" alignItems="center">
+            <span>{userID}</span>
+            <AccountCircleIcon />
+          </Box>
+        </>
+      ) : (
+        <Button
+          color="primary"
+          variant="contained"
+          onClick={() => router.push(`/login`)}  // Wrap router.push in a function
+        >
+          Login
+        </Button>
+      )}
  
-
-
- 
-
-      {/* <IconButton sx={{ display: 'flex', alignItems: 'center' }}>
-        <AccountCircleIcon sx={{ fontSize: 50 }} />
-    
-      </IconButton> */}
 
     </Box>
   );
