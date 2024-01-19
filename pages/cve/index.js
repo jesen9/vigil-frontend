@@ -179,7 +179,14 @@ function factoryclassification() {
                       id="outlined-required"
                       fullWidth
                       size="small"
-                      onChange={(e) => setCVEID(e.target.value)}
+                      onChange={(e) => {
+                        setCVEID(e.target.value)
+                        setSelectedVersion("")
+                        setStartDate(null)
+                        setEndDate(null)
+                        setCvss(null)
+                      }
+                      }
                     renderInput={(params) => (
                       <TextField {...params} size="small" />
                     )}
@@ -289,7 +296,8 @@ function factoryclassification() {
                       onChange={handleCvssChange}
                       
                      
-                      disabled={CVEID !== null && CVEID !== ""}  
+                      disabled={(CVEID !== null && CVEID !== "") || (selectedVersion === null || selectedVersion === "")}
+
                     >
                       {cvssOptions.map((option) => (
                         <MenuItem key={option} value={option}>

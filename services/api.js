@@ -7,7 +7,7 @@ const api = axios.create({
 });
 
 const loginApi = async (loginData) => {
-  return await api.post("users/login", loginData);
+  return await api.post("/login", loginData);
 };
 
 const getCVEList = async (params, resultsPerPage, startIndex) => {

@@ -57,29 +57,29 @@ import {
     async function mountUpdateDatabase() {
       try {
         setIsModalLoading(true);
-        
-
+    
         const updateDatabase = await api.getUpdateDatabase();
         const { data } = updateDatabase;
-        console.log('dataaaa', data)
-  
-        if (data.length === 0){
+        console.log('dataaaa', data);
+    
+        const combinedStatus = data.message.toLowerCase();
+    
+        if (combinedStatus.includes("failed")) {
           setIsModalLoading(false);
-          displayToast("info", "Data Not Found");
+          displayToast("info", data.message);
           setNoDataFound(true);
-        }
-        else {
-          displayToast("success", "Update Successfully");
+        } else {
           setIsModalLoading(false);
+          displayToast("success", data.message);
         }
-        
-        //   setIsModalAddProcessTypeOpen(false);
+    
       } catch (error) {
         setIsModalLoading(false);
         displayToast("error", "Update Failed");
         console.log(error);
       }
     }
+    
       
   
     return (

@@ -26,8 +26,8 @@ const Login = () => {
   const [displayToast] = useToast();
 
   const [loginValue, setLoginValue] = useState({
-    email: "admin@gmail.com",
-    password: "admin1234",
+    email: "",
+    password: "",
   });
   const handleChange = (event) => {
     setLoginValue({ ...loginValue, [event.target.name]: event.target.value });
@@ -50,16 +50,27 @@ const Login = () => {
     try {
       // setToken("token", "jwtToken");
 
-      // if (!validateEmail(loginValue.email)) {
-      //   displayToast("error", "invalid Email");
-      //   setLoading((loading = false));
-      //   return;
-      // }
-      // const postLoginData = await api.loginApi(loginValue);
+      if (!validateEmail(loginValue.email)) {
+        displayToast("error", "invalid Email");
+        setLoading((loading = false));
+        return;
+      }
+      const postLoginData = await api.loginApi(loginValue);
+      const {data} = postLoginData;
+      console.log('login',postLoginData)
+      if(data.status === 'Login Failed') {
+        displayToast("error", "Login Failed");
+        setLoading((loading = false));
+      }
+      else{
+        setLoading((loading = false));
+        displayToast("error", "Login Successful");
+        router.replace("/");
+      }
       // setToken("token", postLoginData.data.data.token);
-      router.replace("/");
+      
     } catch (error) {
-      displayToast("error", "Failed to login");
+      displayToast("error", "Login Failed");
     }
   }
 
