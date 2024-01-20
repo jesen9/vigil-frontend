@@ -14,7 +14,9 @@ import {
   Divider,
 } from "@mui/material";
 import { styled, useTheme } from "@mui/material/styles";
+import useToast from "../utils/toast";
 import MuiDrawer from "@mui/material/Drawer";
+import api from "../services/api";
 import DoubleArrowIcon from "@mui/icons-material/DoubleArrow";
 // import CenturyLogo from "../public/static/logo/century.png"
 import VigilLogo from "../public/static/logo/vigil.png";
@@ -24,6 +26,7 @@ import { useRouter } from "next/router";
 import { getToken, deleteToken } from "../utils/token";
 import { Routes } from "./Routes";
 import { BottomRoutes } from "./BottomRoutes";
+import { setStorage, getStorage, deleteStorage } from "../utils/storage";
 
 const drawerWidth = 230;
 
@@ -88,8 +91,10 @@ const ListFooter = styled(List)(() => ({
 
 const Sidebar = () => {
   const theme = useTheme();
+  const [displayToast] = useToast();
   const router = useRouter();
   const [sideBarOpen, setSidebarOpen] = useState(true);
+  const userID = getStorage("user_id");
 
   // useEffect(() => {
   //   if (!getToken("token")) {
@@ -101,9 +106,21 @@ const Sidebar = () => {
     router.push(`${route}`);
   }
 
-  function logout() {
-    deleteToken("token");
-    changeRoute("/login");
+  async function logout() {
+   
+    const Logout = await api.logout();
+    const {data} = Logout;
+    console.log(data)
+    if (data.status === "User logged out"){
+      localStorage.clear();
+      displayToast("success", data.status);
+      changeRoute("/login");
+    }
+    else {
+      displayToast("info", data.status);
+      // localStorage.clear();
+      // changeRoute("/register");
+    }
   }
 
   function hasChildren(item) {
@@ -288,11 +305,14 @@ const Sidebar = () => {
         {Routes.map((item, key) => (
           <MenuItem key={key} item={item} />
         ))}
-        <ListFooter>
-          {BottomRoutes.map((item, key) => (
-            <MenuItem key={key} item={item} />
-          ))}
-        </ListFooter>
+        {userID && (
+          <ListFooter>
+            {BottomRoutes.map((item, key) => (
+              <MenuItem key={key} item={item} />
+            ))}
+          </ListFooter>
+        )}
+       
       </div>
       {/* <DrawerFooter>
         {sideBarOpen && (

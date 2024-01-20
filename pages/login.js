@@ -25,6 +25,12 @@ const Login = () => {
   const router = useRouter();
   const [displayToast] = useToast();
 
+  const userID = getStorage("user_id");
+  const username = getStorage("username");
+  const token = getToken("token");
+
+  console.log("user", userID, username, token);
+
   const [loginValue, setLoginValue] = useState({
     email: "",
     password: "",
@@ -60,7 +66,7 @@ const Login = () => {
       const {data} = postLoginData;
       setStorage("user_id", data.user_id);
       setStorage("username", data.username);
-      setStorage("token", data.plain_text)
+      setToken("token", data.plain_text)
 
       console.log('login',postLoginData)
       if(data.message === 'Login Success') {

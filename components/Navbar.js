@@ -38,8 +38,9 @@ const Navbar = () => {
   const [notifMenuIsOpen, setNotifMenuIsOpen] = useState(false);
   const userID = getStorage("user_id");
   const username = getStorage("username");
+  const token = getToken("token");
 
-  // console.log("user", userID, username)
+  console.log("user", userID, username, token);
  
 
   function setUserData() {

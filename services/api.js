@@ -6,12 +6,13 @@ const api = axios.create({
   timeout: 1000000,
 });
 
+
+
 const loginApi = async (loginData) => {
   return await api.post("/login", loginData);
 };
 
 const register = async (data) => {
-  
   return await api.post("/register", data);
 };
 
@@ -44,20 +45,46 @@ const getUpdateDatabase = async () => {
 };
 
 const insertNotes = async (payloadNotes) => {
-  return await api.post("/insert-notes", payloadNotes);
-};
+  const token = getToken("token") 
+  return await api.post("/insert-notes?user", payloadNotes,
+  {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  }
+)};
 
 const getNotes = async (cveId) => {
+  const token = getToken("token")
   return await api.get(
-    `/get-notes?veId=${cveId}`
-  );
-};
+    `/get-notes?cveId=${cveId}`
+  ,{
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  }
+)};
 
 const deleteNotes = async (id) => {
+  const token = getToken("token")
   return await api.get(
     `/delete-notes/{id}`
-  );
-};
+  , {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  }
+)};
+
+const logout = async () => {
+  const token = getToken("token")
+  console.log(`logout ${token}`);
+  return await api.post("/logout", {},{
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  }
+)};
 
 
 export default {
@@ -69,4 +96,5 @@ export default {
   loginApi,
   getCVEList,
   getCVEDetails,
+  logout,
 };
