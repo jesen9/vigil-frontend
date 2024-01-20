@@ -140,15 +140,16 @@ const HistoryNotes = () => {
 
   async function mountDeleteNotes(id) {
     try {
+      setIsModalLoading(true)
       const deleteNotes= await api.deleteNotes(
         id,
       );
       const { data } = deleteNotes;
-        setIsModalLoading(true)
       if (data.message ===  "Notes successfully deleted") {
         displayToast("success", data.message);
         handleCloseDelete()
         setIsModalLoading(false)
+        window.location.reload();
       } else {
         displayToast("error", data.message);
         setIsModalLoading(false)
