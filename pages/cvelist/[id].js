@@ -12,7 +12,6 @@ import {
   TableBody,
   Card,
   CardContent,
-  TextField,
   Button,
   Paper,
   Divider,
@@ -27,9 +26,6 @@ import { TooltipProps, tooltipClasses } from '@mui/material/Tooltip';
 import { debounce } from "lodash";
 import { useRouter } from 'next/router';
 import useToast from "../../utils/toast";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
-import dayjs, { Dayjs } from 'dayjs';
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ReplyIcon from '@mui/icons-material/Reply';
 import api from "../../services/api"
@@ -59,9 +55,7 @@ function cveDetails () {
   const userID = getStorage("user_id");
   const [isModalLoading, setIsModalLoading] = useState(false);
   const cveId = router.query.id
-  const [startDate, setStartDate] = React.useState(null);
   const uniqueCWEIds = new Set();
-  const [newComment, setNewComment] = useState('');
   const [cveDetails, setCveDetails] = React.useState([]);
   const [open, setOpen] = useState(false);
 
@@ -124,43 +118,6 @@ const handleTooltipClose = () => {
     }
   }, [router.isReady]);
 
-
-  const handleStartDateChange = (newStartValue) => {
-    setStartDate(newStartValue);
-  };
-
-  const handleAddComment = () => {
-    // Add logic to handle the addition of a new comment
-    console.log('New Comment:', newComment);
-    // You may want to update the comments array in your state or send it to a server.
-    // For simplicity, we're just logging the new comment for now.
-    setNewComment('');
-  };
-
-  const handleEndDateChange = (newStopValue) => {
-    if (startDate) {
-      const maxEndDate = dayjs(startDate).add(30, 'days');
-      if (dayjs(newStopValue).isAfter(maxEndDate)) {
-        // If the selected EndDate is more than 30 days from startDate, reset it
-        setEndDate(null);
-        alert('The range between start date and stop date should not be more than 30 days.');
-      } else {
-        setEndDate(newStopValue);
-      }
-    } else {
-      // If there is no startDate selected, set the EndDate directly
-      setEndDate(newStopValue);
-    }
-  };
-  
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
 
   const getBackgroundColor = (severity) => {
     switch (severity) {

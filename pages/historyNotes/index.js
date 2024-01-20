@@ -1,4 +1,3 @@
-// LAYAR LIST PROCESS TYPE
 import React, { useCallback, useEffect, useState } from "react";
 import {
   Box,
@@ -21,15 +20,8 @@ import {
   TablePagination,
   Badge,
   Modal,
-  Autocomplete,
   Stack,
-  FAB,
-  Alert,
-  Chip,
-  AlertTitle,
   CircularProgress,
-  Pagination,
-  CardActions,
 } from "@mui/material";
 import { useRouter } from "next/router";
 import Link from "../../utils/link";
@@ -52,7 +44,7 @@ import ArrowRightAltRoundedIcon from "@mui/icons-material/ArrowRightAltRounded";
 import { debounce, delay, isNull, isUndefined } from "lodash";
 
 
-const ProcessType = () => {
+const HistoryNotes = () => {
   const router = useRouter();
   const userID = getStorage("user_id");
   // const accessList = getStorage("access_list");
@@ -61,10 +53,13 @@ const ProcessType = () => {
   const [deleteData, setDeleteData] = useState([]);
   const [open, setOpen] = React.useState(false);
   const [listNotes, setListNotes] = useState([]);
+  const [totalNotes, setTotalNotes] = useState([]);
   const [keyword, setKeyword] = useState("");
   const [openDelete, setOpenDelete] = React.useState(false);
   const [openEditNote, setOpenEditNote] = React.useState(false);
   const [openEdit, setOpenEdit] = React.useState(false);
+  const [page, setPage] = React.useState(0);
+  const [rowsPerPage, setRowsPerPage] = React.useState(25);
   const [inputValueEdit, setInputValueEdit] = useState({
     cveId:"",
     notes:"",
@@ -102,10 +97,14 @@ const ProcessType = () => {
     setOpenEditNote(false);
   };
 
-  const [paramNotes, setParamNotes] = useState({
-    page: 0,
-    limit: 10,
-  });
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
 
   const debounceMountListNotes = useCallback(
     debounce(mountListNotes, 400),
@@ -124,14 +123,18 @@ const ProcessType = () => {
 
   async function mountListNotes(keyword) {
     try {
+      setIsModalLoading(true)
       const getAllNotes= await api.getNotes(
         keyword,
       );
       const { data } = getAllNotes;
       console.log('dataNotes',data)
       setListNotes(data);     
+      setTotalNotes(data.length);
+      setIsModalLoading(false)
     } catch (error) {
       console.log(error);
+      setIsModalLoading(false)
     }
   }
 
@@ -179,109 +182,9 @@ const ProcessType = () => {
     }
   }
 
-
-
-
-  ///////////////////////////////////////////////////////////////////////
-  const [totalnotes, setTotalNotes] = useState(0);
-
-  const [listProcessType, setListProcessType] = useState([]);
- 
-  const [paramsProcessType, setParamsProcessType] = useState({
-    page: 0,
-    limit: 10,
-  });
-  const [totalDataProcessType, setTotalDataProcessType] = useState(0);
-
-  const debounceMountListProcessType = useCallback(
-    debounce(mountListProcessType, 400),
-    []
-  );
-
-  async function mountListProcessType(keyword, paramsProcessType) {
-    try {
-      const getAllProcessType = await processType.getAllProcessType(
-        keyword,
-        paramsProcessType
-      );
-      const { data } = getAllProcessType;
-      if (data.error.status === false) {
-        setListProcessType(data.data);
-        setTotalDataProcessType(data.count);
-        displayToast("success", "Berhasil Mengambil List Process Type");
-      } else {
-        displayToast("error", "Gagal Mengambil List Process Type");
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
-  const handlePageChange = (event, newPage) => {
-    if (paramsProcessType.page === newPage) {
-      return;
-    }
-    const newParamsProcessType = {
-      ...paramsProcessType,
-      page: newPage,
-      limit: paramsProcessType.limit,
-    };
-    setParamsProcessType(newParamsProcessType);
-    debounceMountListProcessType(keyword, newParamsProcessType);
-  };
-
-  const handleRowsPerPageChange = async (event, newRows) => {
-    if (paramsProcessType.limit === newRows) {
-      return;
-    }
-    const newParamsProcessType = {
-      ...paramsProcessType,
-      page: 0,
-      limit: event.target.value,
-    };
-    setParamsProcessType(newParamsProcessType);
-    debounceMountListProcessType(keyword, newParamsProcessType);
-  };
-
-  /////////////////////////// SEARCH PROCESS TYPE ///////////////////////////
-  const [inputSearchProcessType, setInputSearchProcessType] = useState("");
-
-  const debounceMountSearchProcessType = useCallback(
-    debounce(mountSearchProcessType, 400),
-    []
-  );
-
-  async function mountSearchProcessType(keyword) {
-    setParamsProcessType({
-      page: 0,
-      limit: 10,
-    });
-    try {
-      const searchProcessType = await processType.getAllProcessType(
-        keyword,
-        paramsProcessType
-      );
-      const { data } = searchProcessType;
-      if (data.error.status === false) {
-        setParamsProcessType({
-          page: 0,
-          limit: 10,
-        });
-        setListProcessType(data.data);
-        setTotalDataProcessType(data.count);
-        displayToast("success", "Berhasil Mengambil Process Type");
-      } else {
-        setListProcessType([]);
-        displayToast("error", "Gagal Mengambil Process Type");
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
   const handleKeyDownSearch = (event, keyword) => {
     if (event.key === "Enter") {
-      debounceMountSearchProcessType(keyword);
+      debounceMountListNotes(keyword);
     }
   };
 
@@ -316,10 +219,10 @@ const ProcessType = () => {
                 fullWidth
                 placeholder="Search by CVE ID"
                 sx={{ backgroundColor: "white" }}
-                value={inputSearchProcessType}
-                onChange={(e) => setInputSearchProcessType(e.target.value)}
+                value={keyword}
+                onChange={(e) => setKeyword(e.target.value)}
                 onKeyDown={(e) =>
-                  handleKeyDownSearch(e, inputSearchProcessType)
+                  handleKeyDownSearch(e, keyword)
                 }
               />
             </ModalInputWrapper>
@@ -329,7 +232,7 @@ const ProcessType = () => {
               size="small"
               startIcon={<SearchIcon />}
               onClick={() =>
-                debounceMountSearchProcessType(inputSearchProcessType)
+                debounceMountListNotes(keyword)
               }
             >
               SEARCH
@@ -404,12 +307,12 @@ const ProcessType = () => {
             <TableFooter>
               <TableRow>
                 <TablePagination
-                  rowsPerPageOptions={[5, 10, 25, 50]}
-                  count={totalDataProcessType}
-                  rowsPerPage={paramsProcessType.limit}
-                  page={paramsProcessType.page}
-                  onPageChange={handlePageChange}
-                  onRowsPerPageChange={handleRowsPerPageChange}
+                  rowsPerPageOptions={[ 10, 25, 50, 100 ]}
+                  count={totalNotes}
+                  rowsPerPage={rowsPerPage}
+                  page={page}
+                  onPageChange={handleChangePage}
+                  onRowsPerPageChange={handleChangeRowsPerPage}
                 />
               </TableRow>
             </TableFooter>
@@ -618,25 +521,25 @@ const ProcessType = () => {
 
         </Dialog> 
 
-      {/* ------------------------------------ MODAL LOADING ------------------------------------ */}
+        {/* ------------------------------------ MODAL LOADING ------------------------------------ */}
 
-      <Modal open={isModalLoading} onClose={() => setIsModalLoading(false)}>
-        <ModalWrapper>
+        <Modal open={isModalLoading} onClose={() => setIsModalLoading(false)}>
+        {/* <ModalWrapper> */}
           <Box
             sx={{
               display: "flex",
               flexDirection: "column",
               justifyContent: "center",
-              width: 750,
+              // width: 750,
               alignItems: "center",
               height: "100%",
             }}
           >
             <CircularProgress color="primary" size={50} thickness={4} />
           </Box>
-        </ModalWrapper>
+        {/* </ModalWrapper> */}
       </Modal>
     </Box>
   );
 };
-export default ProcessType;
+export default HistoryNotes;

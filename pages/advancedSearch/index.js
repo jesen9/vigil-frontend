@@ -14,8 +14,6 @@ import {
   InputLabel,
   Select, 
   MenuItem, 
-  Pagination,
-  ButtonGroup,
   Autocomplete,
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
@@ -47,10 +45,6 @@ const IndexPage = ({ onSelectLetter }) => {
   const optionsIntegrity = ['High', 'Low', 'None'];
   const optionsAvailability = ['High', 'Low', 'None'];
   const router = useRouter();
-  const [cvssOptions, setCvssOptions] = useState([]);
-  const [cvss, setCvss] = React.useState(null);
-  const [cvssV2, setCvssV2] = React.useState(null);
-  const [cvssV3, setCvssV3] = React.useState(null);
   const [CWEID, setCWEID] = React.useState(null);
   const [selectedVersion, setSelectedVersion] = useState("");
   const [selectedOptionsV3, setSelectedOptionsV3] = useState({
@@ -288,66 +282,9 @@ const IndexPage = ({ onSelectLetter }) => {
                     )}
                   />
               </Grid>
-              {/* <Grid item direction={'column'} spacing={2} width={'100%'}>
-                <ListItemText primary="CWE Name" />
-                <TextField
-                  placeholder="Insert CWE Name"
-                      required
-                      id="outlined-required"
-                      fullWidth
-                      size="small"
-                    renderInput={(params) => (
-                      <TextField {...params} size="small" />
-                    )}
-                  />
-              </Grid> */}
+             
             </Stack>
           </ListItem>
-
-          {/* <ListItem>
-          <Stack direction={{ xs: 'column', sm: 'row' }} width={'100%'} spacing={2} >
-          <Grid item direction={'column'} spacing={2} width={'100%'}>
-          <ListItemText primary="Vendor" />
-          <TextField
-            placeholder="Insert Vendor"
-                required
-                id="outlined-required"
-                fullWidth
-                size="small"
-              renderInput={(params) => (
-                <TextField {...params} size="small" />
-              )}
-            />
-          </Grid>
-          <Grid item direction={'column'} spacing={2} width={'100%'}>
-          <ListItemText primary="Product" />
-          <TextField
-            placeholder="Insert Product"
-                required
-                id="outlined-required"
-                fullWidth
-                size="small"
-              renderInput={(params) => (
-                <TextField {...params} size="small" />
-              )}
-            />
-          </Grid>
-          <Grid item direction={'column'} spacing={2} width={'100%'}>
-          <ListItemText primary="Platform" />
-          <TextField
-            placeholder="Insert Platform"
-                required
-                id="outlined-required"
-                fullWidth
-                size="small"
-              renderInput={(params) => (
-                <TextField {...params} size="small" />
-              )}
-            />
-          </Grid>
-          
-          </Stack>
-          </ListItem> */}
           
           <ListItem>
             <Stack direction={{ xs: 'column', sm: 'row' }} width={'100%'} spacing={2} >
@@ -368,19 +305,6 @@ const IndexPage = ({ onSelectLetter }) => {
                     </Select>
                   </FormControl>
               </Grid>
-              {/* <Grid item direction={'column'} spacing={2} width={'100%'}>
-                <ListItemText primary="CWE Name" />
-                <TextField
-                  placeholder="Insert CWE Name"
-                      required
-                      id="outlined-required"
-                      fullWidth
-                      size="small"
-                    renderInput={(params) => (
-                      <TextField {...params} size="small" />
-                    )}
-                  />
-              </Grid> */}
             </Stack>
           </ListItem>
           
@@ -647,10 +571,6 @@ const IndexPage = ({ onSelectLetter }) => {
         </List>
       </Grid>
 
-
-
-
-      {/* Add your content based on the selected letter */}
     </Box>
   );
 };

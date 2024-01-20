@@ -56,11 +56,6 @@ const factoryclassification= () => {
   const [isModalLoading, setIsModalLoading] = useState(false);
   const [open, setOpen] = React.useState(false);
   const [cvelist, setCvelist] = React.useState([]);
-  const cveId = router.query.cveId 
-  const cvssV3Severity = router.query.cvss
-  const cweId = router.query.cweId 
-  const pubStartDate = router.query.startdate
-  const pubEndDate = router.query.enddate
   const [startIndex, setStartIndex] = React.useState(1);
   const [resultsPerPage, setResultPerPage] = React.useState(20);
   const [totalResult, setTotalResult] = React.useState(null);
@@ -107,7 +102,7 @@ const factoryclassification= () => {
         setIsModalLoading(false);
       }
       
-      //   setIsModalAddProcessTypeOpen(false);
+
     } catch (error) {
       setIsModalLoading(false);
       displayToast("error", "Failed to Fetch CVE List Data");
