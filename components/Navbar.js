@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Box, IconButton, TextField, InputAdornment, Button, Divider } from "@mui/material";
+import { Box, IconButton, TextField, InputAdornment, Button, Divider, Typography } from "@mui/material";
 import jwt_decode from "jwt-decode";
 import { useRouter } from 'next/router';
 import { setUser } from "../redux/actions/userAction";
@@ -37,6 +37,10 @@ const Navbar = () => {
   const [anchor, setAnchor] = useState(null);
   const [notifMenuIsOpen, setNotifMenuIsOpen] = useState(false);
   const userID = getStorage("user_id");
+  const username = getStorage("username");
+
+  // console.log("user", userID, username)
+ 
 
   function setUserData() {
     const token = getToken("token");
@@ -144,9 +148,9 @@ const Navbar = () => {
       {userID ? (
         // User is logged in, show username and user icon
         <>
-          <Divider orientation="vertical" sx={{ mx: 2, height: 30 }} />
+          <Divider orientation="vertical" sx={{ mx: 1, height: 60 }} />
           <Box display="flex" alignItems="center">
-            <span>{userID}</span>
+            <Typography sx={{mx:1}}>{username}</Typography>
             <AccountCircleIcon />
           </Box>
         </>

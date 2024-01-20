@@ -8,7 +8,6 @@ import {
   TableContainer,
   TableHead,
   Tooltip,
-  TablePagination, // Import TablePagination
   Typography,
   TableBody,
   Card,
@@ -17,18 +16,10 @@ import {
   Button,
   Paper,
   Divider,
-  Stack,
-  Autocomplete,
-  List,
-  ListItem,
-  ListItemText,
-  ListItemButton,
-  Pagination,
   Link,
   IconButton, 
   Modal,
   CircularProgress,
-  ClickAwayListener,
 } from "@mui/material";
 import { useCallback, useEffect, useState } from "react";
 import { styled } from '@mui/material/styles';
@@ -36,16 +27,9 @@ import { TooltipProps, tooltipClasses } from '@mui/material/Tooltip';
 import { debounce } from "lodash";
 import { useRouter } from 'next/router';
 import useToast from "../../utils/toast";
-import AddIcon from "@mui/icons-material/Add";
-import ViewListIcon from "@mui/icons-material/ViewList";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import SearchIcon from "@mui/icons-material/Search";
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import dayjs, { Dayjs } from 'dayjs';
-import { color } from "@mui/system";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ReplyIcon from '@mui/icons-material/Reply';
 import api from "../../services/api"
@@ -85,74 +69,6 @@ const LightTooltip = styled(({ className, ...props }) => (
   },
 }));
 
-// const cvedetail=
-//     {
-//         cveid:'CVE-2014-9174',
-//         description:'Cross-site scripting (XSS) vulnerability in the Google Analytics by Yoast (google-analytics-for-wordpress) plugin before 5.1.3 for WordPress allows remote attackers to inject arbitrary web script or HTML via the "Manually enter your UA code" (manual_ua_code_field) field in the General Settings.',
-//         cweid:'CWE-79',
-//         cwename: "Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting')",
-//         cwedescription: "The product does not neutralize or incorrectly neutralizes user-controllable input before it is placed in output that is used as a web page that is served to other users.",
-//         publishedat:' 2014-12-02 16:59:11',
-//         updatedat:'2017-09-08 01:29:33',
-//         cvssscore:[
-//           {
-//             "version": "3.1",
-//             "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
-//             "attackVector": "NETWORK",
-//             "attackComplexity": "LOW",
-//             "privilegesRequired": "NONE",
-//             "userInteraction": "NONE",
-//             "scope": "UNCHANGED",
-//             "confidentialityImpact": "HIGH",
-//             "integrityImpact": "HIGH",
-//             "availabilityImpact": "HIGH",
-//             "baseScore": 9.8,
-//             "baseSeverity": "CRITICAL",
-//             "source": "nvd@nist.gov",
-//             "type": "Primary",
-//             "exploitabilityScore": 3.9,
-//             "impactScore": 5.9
-//           },
-//           {
-//               "version": "3.0",
-//               "vectorString": "CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H",
-//               "attackVector": "NETWORK",
-//               "attackComplexity": "LOW",
-//               "privilegesRequired": "NONE",
-//               "userInteraction": "NONE",
-//               "scope": "CHANGED",
-//               "confidentialityImpact": "HIGH",
-//               "integrityImpact": "HIGH",
-//               "availabilityImpact": "HIGH",
-//               "baseScore": 10,
-//               "baseSeverity": "CRITICAL",
-//               "source": "support@hackerone.com",
-//               "type": "Secondary",
-//               "exploitabilityScore": 3.9,
-//               "impactScore": 6
-//           }
-//         ],
-//     }
-
-//  const pocData =[
-//     {
-//       "title": "POC Title 1",
-//       "description": "Description for POC 1",
-//       "link": "https://example.com/poc1",
-//       "comments": [
-//         {
-//           "username": "user1",
-//           "date": "2023-01-01",
-//           "content": "This is a sample comment for POC 1."
-//         },
-//       ]
-//     },
-//     {
-//       "title": "POC Title 2",
-//       "description": "Description for POC 2",
-//       "link": "https://example.com/poc2"
-//     },
-//   ]
 
 
 function factoryclassification () {

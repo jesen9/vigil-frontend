@@ -94,6 +94,13 @@ const Register = () => {
   async function onFinish() {
     try {
       localStorage.clear();
+
+      const registerData= {
+        email: registerValue.email,
+        password: registerValue.password,
+        username: registerValue.username,
+      }
+
       setLoading((true));
 
       if (registerValue.password !== registerValue.confirmPassword) {
@@ -110,22 +117,23 @@ const Register = () => {
       }
 
       // console.log('gaby', registerValue) 
-      const response = await api.registerApi(registerValue); 
+      const response = await api.register(registerData); 
+      const {data} = response;
+     
       // console.log(response, 'response Register');
-      if (response.data.data === "Register successful") {
-        displayToast("error", response.data.data);
-        setLoading((loading = false));
-        // console.log(response, 'response')
-    
-        router.replace("/login")
+      if (data.message === "New user created!") {
+        displayToast("success", data.message);
+        // setLoading((loading = false));
+
+        router.push("/login")
 
       } else {
-        console.log("Failed");
-        displayToast("error", response.data.error.message);
+        console.log("Registration failed");
+        displayToast("error", data.message);
         setLoading((loading = false));
       }
     } catch (error) {
-      displayToast("error", "Failed to login");
+      displayToast("error", "Registration failed");
       setLoading((loading = false));
     }
   }

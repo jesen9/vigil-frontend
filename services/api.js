@@ -10,6 +10,11 @@ const loginApi = async (loginData) => {
   return await api.post("/login", loginData);
 };
 
+const register = async (data) => {
+  
+  return await api.post("/register", data);
+};
+
 const getCVEList = async (params, resultsPerPage, startIndex) => {
   console.log("params", params);
 
@@ -56,6 +61,7 @@ const deleteNotes = async (id) => {
 
 
 export default {
+  register,
   deleteNotes,
   getNotes,
   insertNotes,

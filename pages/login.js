@@ -28,6 +28,7 @@ const Login = () => {
   const [loginValue, setLoginValue] = useState({
     email: "",
     password: "",
+
   });
   const handleChange = (event) => {
     setLoginValue({ ...loginValue, [event.target.name]: event.target.value });
@@ -57,15 +58,19 @@ const Login = () => {
       }
       const postLoginData = await api.loginApi(loginValue);
       const {data} = postLoginData;
+      setStorage("user_id", data.user_id);
+      setStorage("username", data.username);
+      setStorage("token", data.plain_text)
+
       console.log('login',postLoginData)
-      if(data.status === 'Login Failed') {
-        displayToast("error", "Login Failed");
-        setLoading((loading = false));
+      if(data.message === 'Login Success') {
+        displayToast("success", data.message);
+        router.replace("/");
+        // setLoading((loading = false));
       }
       else{
+        displayToast("error", data.message);
         setLoading((loading = false));
-        displayToast("error", "Login Successful");
-        router.replace("/");
       }
       // setToken("token", postLoginData.data.data.token);
       
