@@ -159,7 +159,10 @@ const HistoryNotes = () => {
         displayToast("success", data.message);
         handleCloseDelete()
         setIsModalLoading(false)
-        window.location.reload();
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
+  
       } else {
         displayToast("error", data.message);
         setIsModalLoading(false)
@@ -186,13 +189,15 @@ const HistoryNotes = () => {
         displayToast("success", data.status);
         handleCloseEdit();
         handleCloseEditNotes();
-        window.location.reload();
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
         setIsModalLoading(false)
       } else {
         displayToast("error", data.status);
         setIsModalLoading(false)
         // displayToast("error", "");
-      }
+      } 
     } catch (error) {
       console.log(error);
     }

@@ -119,7 +119,7 @@ const Sidebar = () => {
     if (data.status === "User logged out"){
       localStorage.clear();
       displayToast("success", data.status);
-      changeRoute("/login");
+      changeRoute("/");
     }
     else {
       displayToast("info", data.status);

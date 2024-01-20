@@ -62,7 +62,9 @@ const ScrollToTopButton = ({ value}) => {
       console.log("savenotes", data)
       if (data.status ==="Insert notes success!"){
         displayToast("success", data.status);
-        window.location.reload();
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
         setOpen((previousOpen) => !previousOpen);
         setIsModalLoading(false);
         setOpenDialog(false);
