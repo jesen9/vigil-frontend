@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
   Box,
   Card,
@@ -24,7 +24,7 @@ import { setStorage, getStorage, deleteStorage } from "../utils/storage";
 const Login = () => {
   const router = useRouter();
   const [displayToast] = useToast();
-
+  const passwordRef = useRef(null);
   const userID = getStorage("user_id");
   const username = getStorage("username");
   const token = getToken("token");
@@ -46,6 +46,18 @@ const Login = () => {
   //     router.push("/");
   //   }
   // }, []);
+
+  const handleKeyDownEmail = (event) => {
+    if (event.key === "Enter") {
+      passwordRef.current.focus();
+    }
+   };
+
+   const handleKeyDownPassword = (event) => {
+    if (event.key === "Enter") {
+     onFinish();
+    }
+  };
 
   const validateEmail = (email) => {
     // Regular expression for a basic email validation
@@ -85,9 +97,6 @@ const Login = () => {
     }
   }
 
-  // if (typeof window !== "undefined" && getToken("token")) {
-  //   return null;
-  // }
   return (
     <React.Fragment
       sx={{
@@ -140,6 +149,7 @@ const Login = () => {
                   label="Email"
                   name="email"
                   value={loginValue.email}
+                  onKeyDown={handleKeyDownEmail}
                   onChange={handleChange}
                 />
                 <TextField
@@ -147,7 +157,9 @@ const Login = () => {
                   name="password"
                   type="password"
                   value={loginValue.password}
+                  onKeyDown={handleKeyDownPassword}
                   onChange={handleChange}
+                  inputRef={passwordRef}
                 />
                 <Divider sx={{ mt: 2 }} />
                 <Button

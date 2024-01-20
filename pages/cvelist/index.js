@@ -147,7 +147,7 @@ const factoryclassification= () => {
         <Divider sx={{ my: 2 }} />
        
         <Grid container justifyContent="space-between">
-        <List sx={{ mb: 2 }}>
+        <List sx={{ mb: 2, width: '100%', }}>
         {noDataFound ? (
           <Typography variant="h6" sx={{textAlign: 'center', marginTop: 2 }}>
             No CVE List data found.
@@ -168,15 +168,15 @@ const factoryclassification= () => {
                 />
               </ListItemButton>
               <Divider />
-              <ListItem>
-                <Grid container spacing={2}>
-                  <Grid item xs={12} md={6}>
+              <ListItem justifyContent={"space-between"} sx={{width: "100%"}}>
+                <Grid container justifyContent={"space-between"}>
+                  <Grid item >
                     <ListItemText primary="Published At" secondary={cveItem.publishedat} />
                   </Grid>
-                  <Grid item xs={12} md={6}>
+                  <Grid item >
                     <ListItemText primary="Updated At" secondary={cveItem.updatedat} />
                   </Grid>
-                  <Grid item xs={12} md={6}>
+                  <Grid item >
                     <ListItemText primary="CVSS Score" secondary={cveItem.cvssscore} />
                   </Grid>
                 </Grid>

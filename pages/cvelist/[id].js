@@ -156,8 +156,8 @@ const handleTooltipClose = () => {
 
       <Divider sx={{ my: 2 }} />
       {/* {Array.isArray(cveDetails) && cveDetails.map((cvedetail, index) => ( */}
-  <Grid  container component={Paper} sx={{ p: 2, marginBottom: 3 ,}} justifyContent={'space-between'} rowSpacing={1} elevation={7}>
-    <Grid item>
+  <Grid  container component={Paper} sx={{   p: 2, marginBottom: 3 ,}} justifyContent={'space-between'} rowSpacing={1} elevation={7}>
+    <Grid item sx={{width: "100%"}}>
       <Typography variant="h4" sx={{ fontWeight: 500, mt: 0.5, color:"#8EB4F4"  }}>
         {cveDetails.cveid}
       </Typography>

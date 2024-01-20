@@ -53,6 +53,11 @@ const ScrollToTopButton = ({ value}) => {
     try {
       setIsModalLoading(true);
       const saveNotes = await api.insertNotes(notesData);
+      if (saveNotes.status === 401) {
+        localStorage.clear();
+        displayToast("info", "Unauthorized, returning to login page");
+        router.push("/login"); // Fixed the typo in changeRoute to router.push
+      }
       const {data} = saveNotes;
       console.log("savenotes", data)
       if (data.status ==="Insert notes success!"){

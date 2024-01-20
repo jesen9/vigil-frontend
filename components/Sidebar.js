@@ -109,6 +109,11 @@ const Sidebar = () => {
   async function logout() {
    
     const Logout = await api.logout();
+    if (Logout.status === 401) {
+      localStorage.clear();
+      displayToast("info", "Unauthorized, returning to login page");
+      router.push("/login"); // Fixed the typo in changeRoute to router.push
+    }
     const {data} = Logout;
     console.log(data)
     if (data.status === "User logged out"){

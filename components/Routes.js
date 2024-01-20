@@ -35,10 +35,10 @@ export const Routes = [
     icon:<HistoryIcon/>,
 
   },
-  {
-    path: "/updateDatabase",
-    menu: "Update Database",
-    icon:<StorageIcon/>,
+  // {
+  //   path: "/updateDatabase",
+  //   menu: "Update Database",
+  //   icon:<StorageIcon/>,
 
-  },
+  // },
 ];

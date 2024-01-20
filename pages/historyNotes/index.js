@@ -127,6 +127,11 @@ const HistoryNotes = () => {
       const getAllNotes= await api.getNotes(
         keyword,
       );
+      if (getAllNotes.status === 401) {
+        localStorage.clear();
+        displayToast("info", "Unauthorized, returning to login page");
+        router.push("/login"); // Fixed the typo in changeRoute to router.push
+      }
       const { data } = getAllNotes;
       console.log('dataNotes',data)
       setListNotes(data);     
@@ -144,6 +149,11 @@ const HistoryNotes = () => {
       const deleteNotes= await api.deleteNotes(
         id,
       );
+      if (deleteNotes.status === 401) {
+        localStorage.clear();
+        displayToast("info", "Unauthorized, returning to login page");
+        router.push("/login"); // Fixed the typo in changeRoute to router.push
+      }
       const { data } = deleteNotes;
       if (data.message ===  "Notes successfully deleted") {
         displayToast("success", data.message);
@@ -165,6 +175,11 @@ const HistoryNotes = () => {
       const editNotes= await api.insertNotes(
         inputValueEdit
       );
+      if (editNotes.status === 401) {
+        localStorage.clear();
+        displayToast("info", "Unauthorized, returning to login page");
+        router.push("/login"); // Fixed the typo in changeRoute to router.push
+      }
       const { data } = editNotes;
         setIsModalLoading(true)
       if (data.status ==="Insert notes success!") {
