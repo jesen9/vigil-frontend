@@ -46,7 +46,7 @@ const getUpdateDatabase = async () => {
 
 const insertNotes = async (payloadNotes) => {
   const token = getToken("token") 
-  return await api.post("/insert-notes?user", payloadNotes,
+  return await api.post("/insert-notes?", payloadNotes,
   {
     headers: {
       Authorization: `Bearer ${token}`
@@ -54,10 +54,23 @@ const insertNotes = async (payloadNotes) => {
   }
 )};
 
-const getNotes = async (cveId) => {
+const getNotes = async (keyword) => {
+  
   const token = getToken("token")
   return await api.get(
-    `/get-notes?cveId=${cveId}`
+    `/get-notes?keyword=${keyword}`
+  ,{
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  }
+)};
+
+const getNotebyCVE = async (cveid) => {
+  console.log("getNotes", cveid)
+  const token = getToken("token")
+  return await api.get(
+    `/get-notes?cve_id=${cveid}`
   ,{
     headers: {
       Authorization: `Bearer ${token}`
@@ -67,8 +80,8 @@ const getNotes = async (cveId) => {
 
 const deleteNotes = async (id) => {
   const token = getToken("token")
-  return await api.get(
-    `/delete-notes/{id}`
+  return await api.delete(
+    `/delete-notes/${id}`
   , {
     headers: {
       Authorization: `Bearer ${token}`
@@ -90,6 +103,7 @@ const logout = async () => {
 export default {
   register,
   deleteNotes,
+  getNotebyCVE,
   getNotes,
   insertNotes,
   getUpdateDatabase,

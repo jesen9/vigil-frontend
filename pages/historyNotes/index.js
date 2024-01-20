@@ -32,15 +32,14 @@ import {
   CardActions,
 } from "@mui/material";
 import { useRouter } from "next/router";
+import Link from "../../utils/link";
 import useToast from "../../utils/toast";
+import api from "../../services/api";
 import { setStorage, getStorage, deleteStorage } from "../../utils/storage";
-import AddIcon from "@mui/icons-material/Add";
 import ModalWrapper from "../../components/ModalWrapper";
 import ModalInputWrapper from "../../components/ModalInputWrapper";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
-import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
-import SaveIcon from "@mui/icons-material/Save";
 import SearchIcon from "@mui/icons-material/Search";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import Dialog from "@mui/material/Dialog";
@@ -59,11 +58,135 @@ const ProcessType = () => {
   // const accessList = getStorage("access_list");
   const [displayToast] = useToast();
   const [isModalLoading, setIsModalLoading] = useState(false);
+  const [deleteData, setDeleteData] = useState([]);
   const [open, setOpen] = React.useState(false);
-
-  /////////////////////////// PROCESS TYPE ///////////////////////////
-  const [listProcessType, setListProcessType] = useState([]);
+  const [listNotes, setListNotes] = useState([]);
   const [keyword, setKeyword] = useState("");
+  const [openDelete, setOpenDelete] = React.useState(false);
+  const [openEditNote, setOpenEditNote] = React.useState(false);
+  const [openEdit, setOpenEdit] = React.useState(false);
+  const [inputValueEdit, setInputValueEdit] = useState({
+    cveId:"",
+    notes:"",
+  });
+
+  const handleDelete = (data) => {
+    setDeleteData(data);
+    setOpenDelete(true);
+  };
+
+
+  const handleEdit = () => {
+    setOpenEdit(true);
+  };
+
+  const handleEditNotes = (data) => {
+    console.log(data);
+    setInputValueEdit({
+      ...inputValueEdit,
+      cveId: data.cve_id,
+      notes: data.notes,
+    });
+    setOpenEditNote(true);
+  };
+
+  const handleCloseDelete = () => {
+    setOpenDelete(false);
+  };
+
+  const handleCloseEdit = () => {
+    setOpenEdit(false);
+  };
+
+  const handleCloseEditNotes = () => {
+    setOpenEditNote(false);
+  };
+
+  const [paramNotes, setParamNotes] = useState({
+    page: 0,
+    limit: 10,
+  });
+
+  const debounceMountListNotes = useCallback(
+    debounce(mountListNotes, 400),
+    []
+  );
+
+  const debounceMountDeleteNotes = useCallback(
+    debounce(mountDeleteNotes, 400),
+    []
+  );
+
+  const debounceMountEditNotes = useCallback(
+    debounce(mountEditNotes, 400),
+    []
+  );
+
+  async function mountListNotes(keyword) {
+    try {
+      const getAllNotes= await api.getNotes(
+        keyword,
+      );
+      const { data } = getAllNotes;
+      console.log('dataNotes',data)
+      setListNotes(data);     
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async function mountDeleteNotes(id) {
+    try {
+      const deleteNotes= await api.deleteNotes(
+        id,
+      );
+      const { data } = deleteNotes;
+        setIsModalLoading(true)
+      if (data.message ===  "Notes successfully deleted") {
+        displayToast("success", data.message);
+        handleCloseDelete()
+        setIsModalLoading(false)
+      } else {
+        displayToast("error", data.message);
+        setIsModalLoading(false)
+        // displayToast("error", "");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async function mountEditNotes(inputValueEdit) {
+    try {
+      const editNotes= await api.insertNotes(
+        inputValueEdit
+      );
+      const { data } = editNotes;
+        setIsModalLoading(true)
+      if (data.status ==="Insert notes success!") {
+        displayToast("success", data.status);
+        handleCloseEdit();
+        handleCloseEditNotes();
+        window.location.reload();
+        setIsModalLoading(false)
+      } else {
+        displayToast("error", data.status);
+        setIsModalLoading(false)
+        // displayToast("error", "");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+
+
+
+  ///////////////////////////////////////////////////////////////////////
+  const [totalnotes, setTotalNotes] = useState(0);
+
+  const [listProcessType, setListProcessType] = useState([]);
+ 
   const [paramsProcessType, setParamsProcessType] = useState({
     page: 0,
     limit: 10,
@@ -166,7 +289,7 @@ const ProcessType = () => {
   // ON BEGINING //
   useEffect(() => {
     if (!router.isReady) return;
-    debounceMountListProcessType(keyword, paramsProcessType);
+    debounceMountListNotes(keyword);
   }, [router.isReady]);
 
   return (
@@ -233,14 +356,17 @@ const ProcessType = () => {
             </TableHead>
 
             <TableBody>
-              {listProcessType &&
-                listProcessType.map((processTypeItem, index) => (
+              {listNotes &&
+                listNotes.map((notesItem, index) => (
                   <TableRow key={index}>
                     <TableCell align="center">
-                      {processTypeItem.process_type_id}
+                    <Link  href={`/cvelist/${notesItem.cve_id}`} sx={{ textDecoration: "none"  }}>
+                    <Typography variant="subtitle2" >{notesItem.cve_id}</Typography>
+                    
+                    </Link>
                     </TableCell>
                     <TableCell align="center">
-                      {processTypeItem.process_type_name}
+                      {notesItem.notes}
                     </TableCell>
                     <TableCell align="center">
                           <Box>
@@ -252,6 +378,7 @@ const ProcessType = () => {
                             >
                               <Grid item>
                                 <Button
+                                onClick={ () => handleEditNotes(notesItem)}
                                   size="small"
                                   variant="contained"
                                 >
@@ -260,7 +387,7 @@ const ProcessType = () => {
                               </Grid>
                               <Grid item>
                                 <Button
-                                
+                                  onClick={ () => handleDelete(notesItem)}
                                   size="small"
                                   variant="contained"
                                   color="error"
@@ -271,27 +398,6 @@ const ProcessType = () => {
                             </Grid>
                           </Box>
                         </TableCell>
-                    <TableCell align="center">
-                      <Box>
-                        <Grid
-                          container
-                          spacing={1}
-                          direction="row"
-                          justifyContent="center"
-                        >
-                          <Grid item>
-                            <Button
-                              onClick={() => handleButtonEdit(processTypeItem)}
-                              size="small"
-                              variant="contained"
-                              color="primary"
-                            >
-                              <EditIcon />
-                            </Button>
-                          </Grid>
-                        </Grid>
-                      </Box>
-                    </TableCell>
                   </TableRow>
                 ))}
             </TableBody>
@@ -364,6 +470,153 @@ const ProcessType = () => {
         </Grid>
         </Grid>
         )}
+
+        {/* /////////////////////////////////////// Edit Notes //////////////////////////////////////////////////////// */}
+
+        <Dialog
+        open={openEditNote}
+        onClose={handleCloseEditNotes}
+        PaperProps={{
+          component: 'form',
+          onSubmit: (event) => {
+            event.preventDefault();
+            handleEdit();
+          },
+        }}
+      >
+        <DialogTitle>Edit Notes</DialogTitle>
+        <DialogContent>
+         
+          <TextField
+            multiline
+            
+            margin="dense"
+            disabled
+            label="CVE ID"
+            value={inputValueEdit.cveId}
+            type="email"
+            fullWidth
+            variant="outlined"
+          />
+
+          <TextField
+            multiline
+            fullWidth
+            variant="outlined"
+            label="Notes"
+            rows={7}
+            defaultValue={inputValueEdit.notes}
+            onChange={(e) => setInputValueEdit({ ...inputValueEdit, notes: e.target.value })}
+            sx={{ mb: 2 }}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseEditNotes}>Cancel</Button>
+          <Button type="submit">Submit</Button>
+        </DialogActions>
+      </Dialog>
+
+        
+        {/* /////////////////////////////////// Edit dialog /////////////////////////////////////////////////////// */}
+
+        <Dialog open={openEdit} onClose={handleCloseEdit}>
+          <DialogTitle sx={{ color: "#dd2c00" }} align="center">
+            {<ErrorOutlineRoundedIcon sx={{ fontSize: 60 }} />}
+          </DialogTitle>
+          <DialogContent>
+          <DialogContentText
+            sx={{ color: "text.secondary", pb: 1.2 }}
+            align="center"
+          >
+             You are about to edit this Note:
+          </DialogContentText>
+          <DialogContentText sx={{ color: "text.secondary" }} align="center">
+            {inputValueEdit.cveId}
+          </DialogContentText>
+
+          <DialogContentText
+            sx={{ color: "text.secondary", pt: 1.2 }}
+            align="center"
+          >
+            Are you sure to Edit this notes?
+          </DialogContentText>
+          </DialogContent>
+
+          <DialogContent align="center">
+
+            <Button
+              sx={{ mx: 1 }}
+              variant="outlined"
+              color="error"
+              size="small"
+              onClick={handleCloseEdit}
+            >
+              No
+            </Button>
+
+            <Button
+              sx={{ mx: 1 }}
+              variant="contained"
+              color="primary"
+              size="small"
+              onClick={() => debounceMountEditNotes(inputValueEdit)}
+            >
+              Yes
+            </Button>
+          </DialogContent>
+
+
+        </Dialog>
+
+        {/* /////////////////////////////////// Delete dialog /////////////////////////////////////////////////////// */}
+
+        <Dialog open={openDelete} onClose={handleCloseDelete}>
+          <DialogTitle sx={{ color: "#dd2c00" }} align="center">
+            {<ErrorOutlineRoundedIcon sx={{ fontSize: 60 }} />}
+          </DialogTitle>
+          <DialogContent>
+          <DialogContentText
+            sx={{ color: "text.secondary", pb: 1.2 }}
+            align="center"
+          >
+             You are about to delete this Note:
+          </DialogContentText>
+
+          <DialogContentText sx={{ color: "text.secondary" }} align="center">
+            {deleteData.cve_id}
+          </DialogContentText>
+
+          <DialogContentText
+            sx={{ color: "text.secondary", pt: 1.2 }}
+            align="center"
+          >
+            Are you sure to delete this notes?
+          </DialogContentText>
+          </DialogContent>
+          <DialogContent align="center">
+
+          <Button
+            sx={{ mx: 1 }}
+            variant="outlined"
+            color="error"
+            size="small"
+            onClick={handleCloseDelete}
+          >
+            No
+          </Button>
+
+          <Button
+            sx={{ mx: 1 }}
+            variant="contained"
+            color="primary"
+            size="small"
+            onClick={() => debounceMountDeleteNotes(deleteData.id)}
+          >
+            Yes
+          </Button>
+        </DialogContent>
+
+        </Dialog> 
 
       {/* ------------------------------------ MODAL LOADING ------------------------------------ */}
 

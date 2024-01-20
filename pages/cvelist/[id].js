@@ -35,28 +35,9 @@ import ReplyIcon from '@mui/icons-material/Reply';
 import api from "../../services/api"
 import ModalWrapper from "../../components/ModalWrapper";
 import ModalInputWrapper from "../../components/ModalInputWrapper";
+import { setStorage, getStorage, deleteStorage } from "../../utils/storage";
 import ScrollToTopButton from "../../components/ScrollToTopButton";
 import { green, yellow, red, grey } from '@mui/material/colors';
-
-const Comment = ({ username, date, content, onEdit, onDelete, onReply }) => {
-  return (
-    <div style={{ border: '1px solid #ccc', borderRadius: '5px', padding: '8px', marginTop: '8px', overflowY: 'auto' }}>
-      <Typography variant="subtitle2" color="text.secondary">
-        {username} - {date}
-      </Typography>
-      <Typography variant="body2">{content}</Typography>
-      <IconButton onClick={onEdit} size="small">
-        <EditIcon />
-      </IconButton>
-      <IconButton onClick={onDelete} size="small">
-        <DeleteIcon />
-      </IconButton>
-      <IconButton onClick={onReply} size="small">
-        <ReplyIcon />
-      </IconButton>
-    </div>
-  );
-};
 
 const LightTooltip = styled(({ className, ...props }) => (
   <Tooltip {...props} classes={{ popper: className }} />
@@ -71,20 +52,20 @@ const LightTooltip = styled(({ className, ...props }) => (
 
 
 
-function factoryclassification () {
+function cveDetails () {
   const router = useRouter();
   const [displayToast] = useToast();
+  const [notes, setNotes] = useState('');
+  const userID = getStorage("user_id");
   const [isModalLoading, setIsModalLoading] = useState(false);
   const cveId = router.query.id
   const [startDate, setStartDate] = React.useState(null);
   const uniqueCWEIds = new Set();
-  const [endDate, setEndDate] = React.useState(null);
-  const today = dayjs();
-  const options = ['Low', 'Medium', 'High',];
   const [newComment, setNewComment] = useState('');
   const [cveDetails, setCveDetails] = React.useState([]);
   const [open, setOpen] = useState(false);
 
+  console.log("notes value", notes);
 const handleTooltipOpen = () => {
   setOpen(true);
 };
@@ -96,6 +77,11 @@ const handleTooltipClose = () => {
 
   const debounceMountCVEDetails = useCallback(
     debounce(mountCVEDetails, 400),
+    []
+  );
+
+  const debounceMountNotes = useCallback(
+    debounce(mountNotes, 400),
     []
   );
 
@@ -116,10 +102,26 @@ const handleTooltipClose = () => {
     }
   }
 
+  async function mountNotes(cveId) {
+    try {
+      console.log('cveId: ', cveId);
+      const getNotes = await api.getNotebyCVE(cveId);
+      const { data } = getNotes;
+      console.log('dataNotes', data[0].notes);
+      setNotes(data[0]);
+      // displayToast("error", "");
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   useEffect(() => {
     // console.log("halo gais")
     if (!router.isReady) return;
     debounceMountCVEDetails(router.query.id);
+    if(userID){
+      debounceMountNotes(router.query.id);
+    }
   }, [router.isReady]);
 
 
@@ -521,9 +523,9 @@ const handleTooltipClose = () => {
          
         
 
-      <ScrollToTopButton value={cveDetails}/>
+      <ScrollToTopButton value={notes}/>
     </Box>
   );
 }
 
-export default factoryclassification;
+export default cveDetails;
