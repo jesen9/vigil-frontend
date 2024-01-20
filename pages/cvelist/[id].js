@@ -101,8 +101,8 @@ const handleTooltipClose = () => {
       console.log('cveId: ', cveId);
       const getNotes = await api.getNotebyCVE(cveId);
       const { data } = getNotes;
-      console.log('dataNotes', data[0].notes);
-      setNotes(data[0]);
+      console.log('dataNotes', data);
+      setNotes(data);
       // displayToast("error", "");
     } catch (error) {
       console.log(error);
@@ -479,8 +479,13 @@ const handleTooltipClose = () => {
       </Modal>
          
         
+      {notes ? (
+        <ScrollToTopButton value={ notes } />
+      ):(
+        <ScrollToTopButton value={{ cve_id: router.query.id, notes: notes }} />
+      )
+      }   
 
-      <ScrollToTopButton value={notes}/>
     </Box>
   );
 }

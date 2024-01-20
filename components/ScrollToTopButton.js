@@ -12,7 +12,7 @@ import { debounce, delay, isNull, isUndefined } from "lodash";
 import ErrorOutlineRoundedIcon from "@mui/icons-material/ErrorOutlineRounded";
 
 
-const ScrollToTopButton = ({value}) => {
+const ScrollToTopButton = ({ value}) => {
   // const classes = useStyles();
   const [open, setOpen] = useState(false);
   const [isModalLoading, setIsModalLoading] = useState(false);
@@ -27,9 +27,9 @@ const ScrollToTopButton = ({value}) => {
   const [isEdit, setIsEdit] = useState(false);
   const cveID = value.cve_id
   
-  console.log('value', value)
+  console.log('value',  value)
   const handleSave = (data) => {
-    console.log("dialogData", data);
+   
     setOpenDialog(true);
   };
   const handleCloseDialog = () => {
