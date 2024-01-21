@@ -124,21 +124,29 @@ const HistoryNotes = () => {
   async function mountListNotes(keyword) {
     try {
       setIsModalLoading(true)
+      // console.log("esdfs")
       const getAllNotes= await api.getNotes(
         keyword,
       );
+      console.log("test",getAllNotes)
       if (getAllNotes.status === 401) {
         localStorage.clear();
         displayToast("info", "Unauthorized, returning to login page");
         router.push("/login"); // Fixed the typo in changeRoute to router.push
       }
       const { data } = getAllNotes;
-      console.log('dataNotes',data)
+      // console.log('dataNotes',data)
       setListNotes(data);     
       setTotalNotes(data.length);
       setIsModalLoading(false)
     } catch (error) {
       console.log(error);
+      // console.log("error", error.data)
+      if (error.status === 401) {
+        localStorage.clear();
+        displayToast("info", "Unauthorized, returning to login page");
+        router.push("/login"); // Fixed the typo in changeRoute to router.push
+      }
       setIsModalLoading(false)
     }
   }
@@ -213,7 +221,10 @@ const HistoryNotes = () => {
   // ON BEGINING //
   useEffect(() => {
     if (!router.isReady) return;
-    debounceMountListNotes(keyword);
+    if(userID){
+      debounceMountListNotes(keyword);
+    }
+   
   }, [router.isReady]);
 
   return (

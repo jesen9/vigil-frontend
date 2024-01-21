@@ -40,7 +40,7 @@ const Navbar = () => {
   const username = getStorage("username");
   const token = getToken("token");
 
-  console.log("user", userID, username, token);
+  // console.log("user", userID, username, token);
  
 
   function setUserData() {
@@ -116,7 +116,7 @@ const Navbar = () => {
         onKeyDown={(e) => handleKeyDownSearch(e, e.target.value)}
         sx={{mx:'50px'}}
         InputProps={{
-          disableUnderline: true,
+          // disableUnderline: true,
           startAdornment: (
             <InputAdornment position="start">
               <SearchIcon sx={{ color: "grey" }} />
