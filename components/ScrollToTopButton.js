@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { IconButton, Fab, Paper, Button, Typography, Modal, CircularProgress,  Box, Tooltip,  Fade, TextField, Dialog,DialogContent, Popper,DialogContentText, DialogTitle, } from '@mui/material';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import api from "../services/api";
+import { useRouter } from "next/router";
 import useToast from "../utils/toast";
 import EditIcon from '@mui/icons-material/Edit';
 import ModalWrapper from "../components/ModalWrapper";
@@ -14,6 +15,7 @@ import ErrorOutlineRoundedIcon from "@mui/icons-material/ErrorOutlineRounded";
 
 const ScrollToTopButton = ({ value}) => {
   // const classes = useStyles();
+  const router = useRouter();
   const [open, setOpen] = useState(false);
   const [isModalLoading, setIsModalLoading] = useState(false);
   const [openDialog, setOpenDialog] = React.useState(false);
