@@ -28,8 +28,7 @@ const Login = () => {
   const userID = getStorage("user_id");
   const username = getStorage("username");
   const token = getToken("token");
-
-  console.log("user", userID, username, token);
+  var [loading, setLoading] = useState(false)
 
   const [loginValue, setLoginValue] = useState({
     email: "",
@@ -39,13 +38,6 @@ const Login = () => {
   const handleChange = (event) => {
     setLoginValue({ ...loginValue, [event.target.name]: event.target.value });
   };
-
-  // useEffect(() => {
-  //   console.log(getToken("token"));
-  //   if (getToken("token")) {
-  //     router.push("/");
-  //   }
-  // }, []);
 
   const handleKeyDownEmail = (event) => {
     if (event.key === "Enter") {
@@ -60,20 +52,23 @@ const Login = () => {
   };
 
   const validateEmail = (email) => {
-    // Regular expression for a basic email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   };
 
   async function onFinish() {
     try {
-      // setToken("token", "jwtToken");
+      // console.log("halo", loginValue.email);
+      setLoading((loading = true));
 
       if (!validateEmail(loginValue.email)) {
+        // console.log("halo", loginValue.email);
         displayToast("error", "invalid Email");
         setLoading((loading = false));
         return;
       }
+
+
       const postLoginData = await api.loginApi(loginValue);
       const {data} = postLoginData;
       setStorage("user_id", data.user_id);
@@ -87,18 +82,20 @@ const Login = () => {
         // setLoading((loading = false));
       }
       else{
-        displayToast("error", data.message);
+        // displayToast("error", data.message);
         setLoading((loading = false));
       }
       // setToken("token", postLoginData.data.data.token);
       
     } catch (error) {
+      console.log('error', error)
       displayToast("error", "Login Failed");
     }
   }
 
   return (
-    <React.Fragment
+    <div>
+    <Box
       sx={{
         backgroundColor: "#8EB4F4",
         backgroundSize: "cover",
@@ -181,7 +178,8 @@ const Login = () => {
           </Card>
         </Grid>
       </Grid>
-    </React.Fragment>
+    </Box>
+    </div>
   );
 };
 
