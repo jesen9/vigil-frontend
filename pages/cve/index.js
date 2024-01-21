@@ -108,10 +108,15 @@ function factoryclassification() {
     const formatDate = (date) => date && date.$d.toISOString();
 
     if ((!startDate && endDate) || (startDate && !endDate)) {
-      alert('Please enter both start date and end date');
+      alert('Please insert both start date and end date');
       return;
     }
-  
+
+    if (cvssOptions.length > 0 && !cvssV2 && !cvssV3) {
+      alert('Please insert CVSS Severity');
+      return;
+    }
+      
     const queryParams = [
       CVEID !== null && `cveId=${encodeURIComponent(CVEID)}`,
       cvssV2 !== null && `cvssV2Severity=${encodeURIComponent(cvssV2)}`,

@@ -152,20 +152,27 @@ const IndexPage = ({ onSelectLetter }) => {
     const formatDate = (date) => date && date.$d.toISOString();
 
     if ((!startDate && endDate) || (startDate && !endDate)) {
-      alert('Please enter both start date and end date in Published Date');
+      alert('Please insert both start date and end date in Published Date');
       return;
     }
 
     if  ((!upStartDate && upEndDate) || (upStartDate && !upEndDate)) {
-      alert('Please enter both start date and end date in Update Date');
+      alert('Please insert both start date and end date in Update Date');
       return;
     }
+
+    if (selectedVersion.length > 0 && (!selectedOptionsV2.A && !selectedOptionsV2.AC && !selectedOptionsV2.AV && !selectedOptionsV2.Au && !selectedOptionsV2.C && !selectedOptionsV2.I) && (!selectedOptionsV3.A && !selectedOptionsV3.AC && !selectedOptionsV3.AV && !selectedOptionsV3.S && !selectedOptionsV3.C && !selectedOptionsV3.I && !selectedOptionsV3.PR && !selectedOptionsV3.UI)) {
+      alert('Please insert CVSS Metrics');
+      return;
+    }
+
   
     const queryParams = [
       Object.values(selectedOptionsV2).some((value) => value !== null) &&
     `cvssV2Metrics=${encodeURIComponent(formatCVSSV2(selectedOptionsV2))}`,
-  Object.values(selectedOptionsV3).some((value) => value !== null) &&
+      Object.values(selectedOptionsV3).some((value) => value !== null) &&
     `cvssV3Metrics=${encodeURIComponent(formatCVSSV3(selectedOptionsV3))}`,
+
       formatDate(startDate) && `pubStartDate=${encodeURIComponent(formatDate(startDate))}`,
       formatDate(endDate) && `pubEndDate=${encodeURIComponent(formatDate(endDate))}`,
       formatDate(upStartDate) && `lastModStartDate=${encodeURIComponent(formatDate(upStartDate))}`,
