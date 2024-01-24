@@ -11,9 +11,12 @@ import {
   Stack,
   ListItemText,
   FormControl,
+  FormControlLabel,
+  Checkbox,
   InputLabel,
   Select, 
   MenuItem, 
+  FormGroup,
   Autocomplete,
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
@@ -27,61 +30,39 @@ const IndexPage = ({ onSelectLetter }) => {
   const [selectedLetter, setSelectedLetter] = useState(null);
   const [startDate, setStartDate] = React.useState(null);
   const [endDate, setEndDate] = React.useState(null);
-  const [upStartDate, setUpStartDate] = React.useState(null);
-  const [upEndDate, setUpEndDate] = React.useState(null);
   const today = dayjs();
-  const optionsAV2 = ['Network', 'Adjacent Network', 'Local',];
-  const optionsAC2 = ['High', 'Medium', 'Low'];
-  const optionsConfidentiality2 = ['None', 'Partial', 'Complete'];
-  const optionsIntegrity2 = ['None', 'Partial', 'Complete'];
-  const optionsAvailability2 = ['None', 'Partial', 'Complete'];
-  const optionsA2 = ['Multiple', 'Single', 'None',];
-  const optionsAV = ['Network', 'Adjacent Network', 'Local', 'Physical'];
-  const optionsAC = ['High', 'Low'];
-  const optionsScope = ['Changed', 'Unchanged'];
-  const optionsUI = ['Required', 'None'];
-  const optionsUR = ['High', 'Low', 'None'];
-  const optionsConfidentiality = ['High', 'Low', 'None'];
-  const optionsIntegrity = ['High', 'Low', 'None'];
-  const optionsAvailability = ['High', 'Low', 'None'];
   const router = useRouter();
   const [CWEID, setCWEID] = React.useState(null);
+  const [keyword, setKeyword] = React.useState(null);
   const [selectedVersion, setSelectedVersion] = useState("");
+  const [CPE, setCPE] = useState({
+    type:"*",
+    vendor:"*",
+    product:"*",
+    version:"*",
+  }); 
+
   const [selectedOptionsV3, setSelectedOptionsV3] = useState({
-    AV: null,
-    AC: null,
-    S: null,
-    UI: null,
-    PR: null,
-    C: null,
-    I: null,
-    A: null,
+    AV: [],
+    AC: [],
+    S: [],
+    UI: [],
+    PR: [],
+    C: [],
+    I: [],
+    A: [],
   });
 
   const [selectedOptionsV2, setSelectedOptionsV2] = useState({
-    AV: null,
-    AC: null,
-    Au: null,
-    C: null,
-    I: null,
-    A: null,
+    AV: [],
+    AC: [],
+    Au: [],
+    C: [],
+    I: [],
+    A: [],
   });
 
-  const handleOptionChange = (field, newValue) => {
-    const firstLetter = newValue ? newValue[0].toUpperCase() : null;
-    setSelectedOptionsV3((prevOptions) => ({
-      ...prevOptions,
-      [field]: firstLetter,
-    }));
-  };
 
-  const handleOptionChangeV2 = (field, newValue) => {
-    const firstLetter = newValue ? newValue[0].toUpperCase() : null;
-    setSelectedOptionsV2((prevOptions) => ({
-      ...prevOptions,
-      [field]: firstLetter,
-    }));
-  };
 
   const formatCVSSV3 = (options) => {
     const formattedOptions = Object.keys(options)
@@ -101,9 +82,70 @@ const IndexPage = ({ onSelectLetter }) => {
     return `${formattedOptions}`;
   };
 
+  const handleCheckboxChange = (category, value) => {
+    setSelectedOptionsV3((prevSelectedOptions) => {
+      // Check if the checkbox is checked or unchecked
+      if (prevSelectedOptions[category].includes(value)) {
+        // If checked, remove the value from the array
+        return {
+          ...prevSelectedOptions,
+          [category]: prevSelectedOptions[category].filter((item) => item !== value),
+        };
+      } else {
+        // If unchecked, add the value to the array
+        return {
+          ...prevSelectedOptions,
+          [category]: [...prevSelectedOptions[category], value],
+        };
+      }
+    });
+  };
+  
+
+  const handleCheckboxChangeV2 = (category, value) => {
+    setSelectedOptionsV2((prevOptions)  => {
+      const updatedOptions = { ...prevOptions };
+
+      if (value) {
+        // Add the selected value to the array
+        updatedOptions[category].push(value);
+      } else {
+        // Remove the value from the array
+        updatedOptions[category] = updatedOptions[category].filter((item) => item !== value);
+      }
+
+      return updatedOptions;
+    });
+
+  };
+
 
   const handleVersionChange = (event) => {
     const version = event.target.value;
+  
+    // Reset the checkbox arrays based on the selected version
+    if (version === 'cvssV3') {
+      setSelectedOptionsV2({
+        AV: [],
+        AC: [],
+        Au: [],
+        C: [],
+        I: [],
+        A: [],
+      });
+    } else if (version === 'cvssV2') {
+      setSelectedOptionsV3({
+        AV: [],
+        AC: [],
+        S: [],
+        UI: [],
+        PR: [],
+        C: [],
+        I: [],
+        A: [],
+      });
+    }
+  
     setSelectedVersion(version);
   };
 
@@ -156,32 +198,50 @@ const IndexPage = ({ onSelectLetter }) => {
       return;
     }
 
-    if  ((!upStartDate && upEndDate) || (upStartDate && !upEndDate)) {
-      alert('Please insert both start date and end date in Update Date');
-      return;
-    }
+    // if  ((!upStartDate && upEndDate) || (upStartDate && !upEndDate)) {
+    //   alert('Please insert both start date and end date in Update Date');
+    //   return;
+    // }
 
     if (selectedVersion.length > 0 && (!selectedOptionsV2.A && !selectedOptionsV2.AC && !selectedOptionsV2.AV && !selectedOptionsV2.Au && !selectedOptionsV2.C && !selectedOptionsV2.I) && (!selectedOptionsV3.A && !selectedOptionsV3.AC && !selectedOptionsV3.AV && !selectedOptionsV3.S && !selectedOptionsV3.C && !selectedOptionsV3.I && !selectedOptionsV3.PR && !selectedOptionsV3.UI)) {
       alert('Please insert CVSS Metrics');
       return;
     }
 
+    let cvssParam;
+    let urlPrefix;
+
+    if (selectedOptionsV3 && Object.values(selectedOptionsV3).some(category => category.length > 0)) {
+     
+      cvssParam = Object.entries(selectedOptionsV3)
+        .filter(([category, values]) => values.length > 0)
+        .map(([category, values]) => values.map(value => `${category}:${value}`).join('/'))
+        .join('/');
+        urlPrefix = 'cvssV3Metrics=';
+    } else {
+      // Use selectedOptionsV2 if selectedOptionsV3 is null or empty
+      cvssParam = Object.entries(selectedOptionsV2)
+        .filter(([category, values]) => values.length > 0)
+        .map(([category, values]) => values.map(value => `${category}:${value}`).join('/'))
+        .join('/');
+        urlPrefix = 'cvssV2Metrics=';
+    }
+
   
     const queryParams = [
-      Object.values(selectedOptionsV2).some((value) => value !== null) &&
-    `cvssV2Metrics=${encodeURIComponent(formatCVSSV2(selectedOptionsV2))}`,
-      Object.values(selectedOptionsV3).some((value) => value !== null) &&
-    `cvssV3Metrics=${encodeURIComponent(formatCVSSV3(selectedOptionsV3))}`,
-
+      cvssParam && `${urlPrefix}${cvssParam}`,
       formatDate(startDate) && `pubStartDate=${encodeURIComponent(formatDate(startDate))}`,
       formatDate(endDate) && `pubEndDate=${encodeURIComponent(formatDate(endDate))}`,
-      formatDate(upStartDate) && `lastModStartDate=${encodeURIComponent(formatDate(upStartDate))}`,
-      formatDate(upEndDate) && `lastModEndDate=${encodeURIComponent(formatDate(upEndDate))}`,
+      // formatDate(upStartDate) && `lastModStartDate=${encodeURIComponent(formatDate(upStartDate))}`,
+      // formatDate(upEndDate) && `lastModEndDate=${encodeURIComponent(formatDate(upEndDate))}`,
       CWEID !== null && `cweId=${encodeURIComponent(CWEID)}`,
+      keyword !== null && `keywordSearch=${encodeURIComponent(keyword)}`,
+      CPE.type !== "*" && CPE.vendor !== "*" && CPE.product !== "*" && CPE.version !== "*" &&
+      `virtualMatchString=cpe:2.3:${CPE.type}:${CPE.vendor}:${CPE.product}:${CPE.version}`,
     ].filter(Boolean).join('&');
   
     const url = `/cvelist${queryParams ? `?${queryParams}` : ''}`;
-  
+    
 
     router.push(url);
   };
@@ -198,8 +258,95 @@ const IndexPage = ({ onSelectLetter }) => {
       </Grid>
       <Divider sx={{ my: 2 }} />
 
+
       <Grid container justifyContent="space-between">
         <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
+
+        <ListItem>
+            <Stack direction={{ xs: 'column', sm: 'row' }} width={'100%'} spacing={2} >
+              <Grid item direction={'column'} spacing={2} width={'100%'}>
+                <ListItemText primary="Keyword" />
+                <TextField
+                  placeholder="CVE ID, Vendor, Product..."
+                      required
+                      id="outlined-required"
+                      fullWidth
+                      size="small"
+                      onChange={(e) => setKeyword(e.target.value)}
+                    renderInput={(params) => (
+                      <TextField {...params} size="small" />
+                    )}
+                  />
+              </Grid>
+             
+            </Stack>
+          </ListItem>
+
+        <ListItem>
+            <Stack direction={{ xs: 'column', sm: 'row' }} width={'100%'} spacing={2} >
+            <Grid item direction={'column'} spacing={2} width={'100%'}>
+                <ListItemText primary="Part/Type" />
+                <FormControl fullWidth size="small">
+                    <Select
+                      labelId="version-label"
+                      id="version"
+                      value={CPE.type}
+                      onChange={(e) => setCPE((prevCPE) => ({ ...prevCPE, type: e.target.value }))}
+                      // label="Select Version"
+                    >
+                      <MenuItem value="a">Applications</MenuItem>
+                      <MenuItem value="h">Hardware</MenuItem>
+                      <MenuItem value="0">Operating System</MenuItem>
+                    </Select>
+                  </FormControl>
+              </Grid>
+              <Grid item direction={'column'} spacing={2} width={'100%'}>
+                <ListItemText primary="Vendor" />
+                <TextField
+                  placeholder="exact match , eg. google"
+                      required
+                      id="outlined-required"
+                      fullWidth
+                      size="small"
+                      onChange={(e) => setCPE((prevCPE) => ({ ...prevCPE, vendor: e.target.value }))}
+                    renderInput={(params) => (
+                      <TextField {...params} size="small" />
+                    )}
+                  />
+              </Grid>
+
+              <Grid item direction={'column'} spacing={2} width={'100%'}>
+                <ListItemText primary="Product" />
+                <TextField
+                  placeholder="exact match , eg. android"
+                      required
+                      id="outlined-required"
+                      fullWidth
+                      size="small"
+                      onChange={(e) => setCPE((prevCPE) => ({ ...prevCPE, product: e.target.value }))}
+                    renderInput={(params) => (
+                      <TextField {...params} size="small" />
+                    )}
+                  />
+              </Grid>
+
+              <Grid item direction={'column'} spacing={2} width={'100%'}>
+                <ListItemText primary="Version" />
+                <TextField
+                  placeholder="exact match, eg. 11.0"
+                      required
+                      id="outlined-required"
+                      fullWidth
+                      size="small"
+                      onChange={(e) => setCPE((prevCPE) => ({ ...prevCPE, version: e.target.value }))}
+                    renderInput={(params) => (
+                      <TextField {...params} size="small" />
+                    )}
+                  />
+              </Grid>
+             
+            </Stack>
+          </ListItem>
         <ListItem>
           <Stack direction={{ xs: 'column', sm: 'row' }} width={'100%'} spacing={2} >
           
@@ -209,7 +356,7 @@ const IndexPage = ({ onSelectLetter }) => {
 
           <Grid container spacing={2} >
             <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <Grid item xs={12} sm={6}>
+              <Grid item xs={12} sm={4}>
                 <DatePicker
                   label="Start Date"
                   value={startDate}
@@ -220,7 +367,7 @@ const IndexPage = ({ onSelectLetter }) => {
                   )}
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid item xs={12} sm={4}>
                 <DatePicker
                   label="End Date"
                   value={endDate}
@@ -232,44 +379,16 @@ const IndexPage = ({ onSelectLetter }) => {
                   sx={{ width: '100%' }}
                 />
               </Grid>
+
+              <Grid item xs={12} sm={4}>
+                
+            <FormControlLabel  control={<Checkbox size='small'/>} label="Is Updated" />
+              </Grid>
             </LocalizationProvider>
+            
           </Grid>
            </Grid>
 
-          <Grid item direction={'column'} spacing={2} width={'100%'}>
-          <ListItemText primary="Update Date" />
-
-
-          <Grid container spacing={2}>
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <Grid item xs={12} sm={6}>
-                <DatePicker
-                  label="Start Date"
-                  value={upStartDate}
-                  onChange={handleUpStartDateChange}
-                  maxDate={today}
-                  renderInput={(params) => (
-                    <TextField {...params} size="small" fullWidth />
-                  )}
-                  format="DD-MM-YYYY"
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <DatePicker
-                  label="End Date"
-                  value={upEndDate}
-                  onChange={handleUpEndDateChange}
-                  maxDate={today}
-                  renderInput={(params) => (
-                    <TextField {...params} size="small" fullWidth />
-                  )}
-                  sx={{ width: '100%' }}
-                  format="DD-MM-YYYY"
-                />
-              </Grid>
-            </LocalizationProvider>
-          </Grid>
-          </Grid>
           </Stack>
         </ListItem>
 
@@ -298,7 +417,6 @@ const IndexPage = ({ onSelectLetter }) => {
               <Grid item direction={'column'} spacing={2} width={'100%'}>
               <ListItemText primary="CVSS Version" />
               <FormControl fullWidth size="small">
-                  <InputLabel id="cvss">Version</InputLabel>
                     <Select
                       labelId="version-label"
                       id="version"
@@ -316,239 +434,146 @@ const IndexPage = ({ onSelectLetter }) => {
           </ListItem>
           
           {selectedVersion === 'cvssV3' && (
-        <>
-          <ListItem>
-            <Stack direction={{ xs: 'column', sm: 'row' }} width={'100%'} spacing={2} >
-              <Grid item direction={'column'} spacing={2} width={'100%'}>
-                <ListItemText primary="Attack Vector" />
-                <Autocomplete
-                  options={optionsAV}
-                  value={selectedOptionsV3.AV}
-                onChange={(event, newValue) => handleOptionChange('AV', newValue)}
-                  sx={{ backgroundColor: "white", width: "100%",}}
-                  size="small"
-                  fullWidth
-                  renderInput={(params) => (
-                    <TextField {...params} size="small"      />
-                  )}
-                />
-              </Grid>
-              <Grid item direction={'column'} spacing={2} width={'100%'}>
-                <ListItemText primary="Attack Complexity" />
-                <Autocomplete
-                  options={optionsAC}
-                  value={selectedOptionsV3.AC}
-                onChange={(event, newValue) => handleOptionChange('AC', newValue)}
-                  sx={{ backgroundColor: "white", width: "100%",}}
-                  size="small"
-                  fullWidth
-                  renderInput={(params) => (
-                    <TextField {...params} size="small"      />
-                  )}
-                />
-              </Grid>
-              <Grid item direction={'column'} spacing={2} width={'100%'}>
-                <ListItemText primary="Scope" />
-                <Autocomplete
-                  options={optionsScope}
-                  value={selectedOptionsV3.S}
-                onChange={(event, newValue) => handleOptionChange('S', newValue)}
-                  sx={{ backgroundColor: "white", width: "100%",}}
-                  size="small"
-                  fullWidth
-                  renderInput={(params) => (
-                    <TextField {...params} size="small"     />
-                  )}
-                />
-              </Grid>
-              <Grid item direction={'column'} spacing={2} width={'100%'}>
-                <ListItemText primary="User Interaction" />
-                <Autocomplete
-                  options={optionsUI}
-                  value={selectedOptionsV3.UI}
-                onChange={(event, newValue) => handleOptionChange('UI', newValue)}
-                  sx={{ backgroundColor: "white", width: "100%",}}
-                  size="small"
-                  fullWidth
-                  renderInput={(params) => (
-                    <TextField {...params} size="small"     />
-                  )}
-                />
-              </Grid>
-            </Stack>
-          </ListItem>
+            <>
+              <ListItem>
+                <Stack direction={{ xs: 'column', sm: 'row' }} width={'100%'} spacing={2} >
+                <Grid item direction={'column'} spacing={2} width={'100%'}> 
+                    <ListItemText primary="Attack Vector" />
+                    <FormGroup>
+                        <FormControlLabel        control={<Checkbox size='small' onChange={(e) => handleCheckboxChange('AV', 'P')} />} label="Physical" />
+                        <FormControlLabel  control={<Checkbox size='small' onChange={(e) => handleCheckboxChange('AV', 'L')}/>} label="Local" />
+                        <FormControlLabel control={<Checkbox size='small' onChange={(e) => handleCheckboxChange('AV', 'A')}/>}  label="Adjacent network" />
+                        <FormControlLabel control={<Checkbox size='small'  onChange={(e) => handleCheckboxChange('AV', 'N')}/>} label="Network" />
+                    </FormGroup>
+                </Grid> 
+                  <Grid item direction={'column'} spacing={2} width={'100%'}>
+                    <ListItemText primary="Attack Complexity" />
+                    <FormGroup>
+                        <FormControlLabel  control={<Checkbox size='small' onChange={(e) => handleCheckboxChange('AC', 'L')}/>} label="Low" />
+                        <FormControlLabel  control={<Checkbox size='small' onChange={(e) => handleCheckboxChange('AC', 'H')}/>} label="High" />
+                    </FormGroup>
+                  </Grid>
+                  <Grid item direction={'column'} spacing={2} width={'100%'}>
+                    <ListItemText primary="Scope" />
+                    <FormGroup>
+                        <FormControlLabel  control={<Checkbox size='small' onChange={(e) => handleCheckboxChange('S', 'U')}/>} label="Unchanged" />
+                        <FormControlLabel  control={<Checkbox size='small' onChange={(e) => handleCheckboxChange('S', 'C')}/>} label="Changed" />
+                    </FormGroup>
+                  </Grid>
+                  <Grid item direction={'column'} spacing={2} width={'100%'}>
+                    <ListItemText primary="User Interaction" />
+                    <FormGroup>
+                        <FormControlLabel  control={<Checkbox size='small'
+                        onChange={(e) => handleCheckboxChange('UI', 'N')}/>} label="None" />
+                        <FormControlLabel  control={<Checkbox size='small' onChange={(e) => handleCheckboxChange('UI', 'R')}/>} label="Required" />
+                    </FormGroup>
+                  </Grid>
+                </Stack>
+              </ListItem>
 
-          <ListItem>
-            <Stack direction={{ xs: 'column', sm: 'row' }} width={'100%'} spacing={2} >
-              <Grid item direction={'column'} spacing={2} width={'100%'}>
-                <ListItemText primary="Privileges Required" />
-                <Autocomplete
-                  options={optionsUR}
-                  value={selectedOptionsV3.PR}
-                onChange={(event, newValue) => handleOptionChange('PR', newValue)}
-                  sx={{ backgroundColor: "white", width: "100%",}}
-                  size="small"
-                  fullWidth
-                 
-                  renderInput={(params) => (
-                    <TextField {...params} size="small"    />
-                  )}
-                />
-              </Grid>
-              <Grid item direction={'column'} spacing={2} width={'100%'}>
-                <ListItemText primary="Confidentiality" />
-                <Autocomplete
-                  options={optionsConfidentiality}
-                  value={selectedOptionsV3.C}
-                onChange={(event, newValue) => handleOptionChange('C', newValue)}
-                  sx={{ backgroundColor: "white", width: "100%",}}
-                  size="small"
-                  fullWidth
-                  
-                  renderInput={(params) => (
-                    <TextField {...params} size="small"   />
-                  )}
-                />
-              </Grid>
-              <Grid item direction={'column'} spacing={2} width={'100%'}>
-                <ListItemText primary="Integrity" />
-                <Autocomplete
-           
-                  options={optionsIntegrity}
-                  value={selectedOptionsV3.I}
-                onChange={(event, newValue) => handleOptionChange('I', newValue)}
-                  sx={{ backgroundColor: "white", width: "100%",}}
-                  size="small"
-                  fullWidth
-                 
-                  renderInput={(params) => (
-                    <TextField {...params} size="small"     />
-                  )}
-                />
-              </Grid>
-              <Grid item direction={'column'} spacing={2} width={'100%'}>
-                <ListItemText primary="Availability" />
-                <Autocomplete
-           
-                  options={optionsAvailability}
-                  value={selectedOptionsV3.A}
-                onChange={(event, newValue) => handleOptionChange('A', newValue)}
-                  sx={{ backgroundColor: "white", width: "100%",}}
-                  size="small"
-                  fullWidth
-                 
-                  renderInput={(params) => (
-                    <TextField {...params} size="small"     />
-                  )}
-                />
-              </Grid>
-            </Stack>
-          </ListItem>
-        </>
-        )}
+              <ListItem>
+                <Stack direction={{ xs: 'column', sm: 'row' }} width={'100%'} spacing={2} >
+                  <Grid item direction={'column'} spacing={2} width={'100%'}>
+                    <ListItemText primary="Privileges Required" />
+                    <FormGroup>
+                    <FormControlLabel  control={<Checkbox size='small' onChange={(e) => handleCheckboxChange('PR', 'N')}/>} label="None" />
+                        <FormControlLabel  control={<Checkbox size='small' onChange={(e) => handleCheckboxChange('PR', 'L')}/>} label="Low" />
+                        <FormControlLabel  control={<Checkbox size='small' onChange={(e) => handleCheckboxChange('PR', 'H')}/>} label="High" />
+                    </FormGroup>
+                  </Grid>
+                  <Grid item direction={'column'} spacing={2} width={'100%'}>
+                    <ListItemText primary="Confidentiality" />
+                    <FormGroup>
+                    <FormControlLabel  control={<Checkbox size='small' onChange={(e) => handleCheckboxChange('C', 'N')}/>} label="None" />
+                        <FormControlLabel  control={<Checkbox size='small' onChange={(e) => handleCheckboxChange('C', 'L')}/>} label="Low" />
+                        <FormControlLabel  control={<Checkbox size='small' onChange={(e) => handleCheckboxChange('C', 'H')}/>} label="High" />
+                    </FormGroup>
+                  </Grid>
+                  <Grid item direction={'column'} spacing={2} width={'100%'}>
+                    <ListItemText primary="Integrity" />
+                    <FormGroup>
+                    <FormControlLabel  control={<Checkbox size='small' onChange={(e) => handleCheckboxChange('I', 'N')}/>} label="None" />
+                        <FormControlLabel  control={<Checkbox size='small' onChange={(e) => handleCheckboxChange('I', 'L')}/>} label="Low" />
+                        <FormControlLabel  control={<Checkbox size='small' onChange={(e) => handleCheckboxChange('I', 'H')}/>} label="High" />
+                    </FormGroup>
+                  </Grid>
+                  <Grid item direction={'column'} spacing={2} width={'100%'}>
+                    <ListItemText primary="Availability" />
+                    <FormGroup>
+                    <FormControlLabel  control={<Checkbox size='small' onChange={(e) => handleCheckboxChange('A', 'N')}/>} label="None" />
+                        <FormControlLabel  control={<Checkbox size='small' onChange={(e) => handleCheckboxChange('A', 'L')}/>} label="Low" />
+                        <FormControlLabel  control={<Checkbox size='small' onChange={(e) => handleCheckboxChange('A', 'H')}/>} label="High" />
+                    </FormGroup>
+                  </Grid>
+                </Stack>
+              </ListItem>
+            </>
+            )}
 
-{selectedVersion === 'cvssV2' && (
-        <>
-          <ListItem>
-            <Stack direction={{ xs: 'column', sm: 'row' }} width={'100%'} spacing={2} >
-              <Grid item direction={'column'} spacing={2} width={'100%'}>
-                <ListItemText primary="Access Vector" />
-                <Autocomplete
-                  options={optionsAV2}
-                  value={selectedOptionsV2.AV}
-                onChange={(event, newValue) => handleOptionChangeV2('AV', newValue)}
-                  sx={{ backgroundColor: "white", width: "100%",}}
-                  size="small"
-                  fullWidth
-                  renderInput={(params) => (
-                    <TextField {...params} size="small"     />
-                  )}
-                />
-              </Grid>
-              <Grid item direction={'column'} spacing={2} width={'100%'}>
-                <ListItemText primary="Access Complexity" />
-                <Autocomplete
-                  options={optionsAC2}
-                  value={selectedOptionsV2.AC}
-                  onChange={(event, newValue) => handleOptionChangeV2('AC', newValue)}
-                  sx={{ backgroundColor: "white", width: "100%",}}
-                  size="small"
-                  fullWidth
-                  renderInput={(params) => (
-                    <TextField {...params} size="small"     />
-                  )}
-                />
-              </Grid>
-              <Grid item direction={'column'} spacing={2} width={'100%'}>
-                <ListItemText primary="Authentication" />
-                <Autocomplete
-                  options={optionsA2}
-                  value={selectedOptionsV2.Au}
-                  onChange={(event, newValue) => handleOptionChangeV2('Au', newValue)}
-                  sx={{ backgroundColor: "white", width: "100%",}}
-                  size="small"
-                  fullWidth
-                  renderInput={(params) => (
-                    <TextField {...params} size="small"     />
-                  )}
-                />
-              </Grid>
-            </Stack>
-          </ListItem>
+          {selectedVersion === 'cvssV2' && (
+            <>
+              <ListItem>
+                <Stack direction={{ xs: 'column', sm: 'row' }} width={'100%'} spacing={2} >
+                  <Grid item direction={'column'} spacing={2} width={'100%'}>
+                    <ListItemText primary="Access Vector" />
+                    <FormGroup>
+                        <FormControlLabel  control={<Checkbox size='small' onChange={(e) => handleCheckboxChangeV2('AV', 'L')}/>} label="Local" />
+                        <FormControlLabel control={<Checkbox size='small' onChange={(e) => handleCheckboxChangeV2('AV', 'A')}/>}  label="Adjacent network" />
+                        <FormControlLabel control={<Checkbox size='small'/>} label="Network" />
+                    </FormGroup>
+                  </Grid>
+                  <Grid item direction={'column'} spacing={2} width={'100%'}>
+                    <ListItemText primary="Access Complexity" />
+                    <FormGroup>
+                        <FormControlLabel  control={<Checkbox size='small' onChange={(e) => handleCheckboxChangeV2('AC', 'L')}/>} label="Low" />
+                        <FormControlLabel  control={<Checkbox size='small' onChange={(e) => handleCheckboxChangeV2('AC', 'M')}/>} label="Medium" />
+                        <FormControlLabel  control={<Checkbox size='small' onChange={(e) => handleCheckboxChangeV2('AC', 'H')}/>} label="High" />
+                    </FormGroup>
+                  </Grid>
+                  <Grid item direction={'column'} spacing={2} width={'100%'}>
+                    <ListItemText primary="Authentication" />
+                    <FormGroup>
+                        <FormControlLabel  control={<Checkbox size='small' onChange={(e) => handleCheckboxChangeV2('Au', 'M')}/>} label="Multiple" />
+                        <FormControlLabel  control={<Checkbox size='small' onChange={(e) => handleCheckboxChangeV2('Au', 'S')}/>} label="Single" />
+                        <FormControlLabel  control={<Checkbox size='small' onChange={(e) => handleCheckboxChangeV2('Au', 'N')}/>} label="None" />
+                    </FormGroup>
+                  </Grid>
+                </Stack>
+              </ListItem>
 
-          <ListItem>
-            <Stack direction={{ xs: 'column', sm: 'row' }} width={'100%'} spacing={2} >
-              <Grid item direction={'column'} spacing={2} width={'100%'}>
-                <ListItemText primary="Confidentiality" />
-                <Autocomplete
-                  options={optionsConfidentiality2}
-                  value={selectedOptionsV2.C}
-                  onChange={(event, newValue) => handleOptionChangeV2('C', newValue)}
-                  sx={{ backgroundColor: "white", width: "100%",}}
-                  size="small"
-                  fullWidth
-                  
-                  renderInput={(params) => (
-                    <TextField {...params} size="small"     />
-                  )}
-                />
-              </Grid>
-              <Grid item direction={'column'} spacing={2} width={'100%'}>
-                <ListItemText primary="Integrity" />
-                <Autocomplete
-           
-                  options={optionsIntegrity2}
-                  value={selectedOptionsV2.I}
-                  onChange={(event, newValue) => handleOptionChangeV2('I', newValue)}
-                  sx={{ backgroundColor: "white", width: "100%",}}
-                  size="small"
-                  fullWidth
-                 
-                  renderInput={(params) => (
-                    <TextField {...params} size="small"   />
-                  )}
-                />
-              </Grid>
-              <Grid item direction={'column'} spacing={2} width={'100%'}>
-                <ListItemText primary="Availability" />
-                <Autocomplete
-           
-                  options={optionsAvailability2}
-                  value={selectedOptionsV2.A}
-                  onChange={(event, newValue) => handleOptionChangeV2('A', newValue)}
-                  sx={{ backgroundColor: "white", width: "100%",}}
-                  size="small"
-                  fullWidth
-                 
-                  renderInput={(params) => (
-                    <TextField {...params} size="small"    />
-                  )}
-                />
-              </Grid>
-            </Stack>
-          </ListItem>
-        </>
-        )}
+              <ListItem>
+                <Stack direction={{ xs: 'column', sm: 'row' }} width={'100%'} spacing={2} >
+                  <Grid item direction={'column'} spacing={2} width={'100%'}>
+                    <ListItemText primary="Confidentiality" />
+                    <FormGroup>
+                        <FormControlLabel  control={<Checkbox size='small' onChange={(e) => handleCheckboxChangeV2('C', 'N')}/>} label="None" />
+                        <FormControlLabel  control={<Checkbox size='small' onChange={(e) => handleCheckboxChangeV2('C', 'P')}/>} label="Partial" />
+                        <FormControlLabel  control={<Checkbox size='small' onChange={(e) => handleCheckboxChangeV2('C', 'C')}/>} label="Complete" />
+                    </FormGroup>
+                  </Grid>
+                  <Grid item direction={'column'} spacing={2} width={'100%'}>
+                    <ListItemText primary="Integrity" />
+                    <FormGroup>
+                        <FormControlLabel  control={<Checkbox size='small' onChange={(e) => handleCheckboxChangeV2('I', 'N')}/>} label="None" />
+                        <FormControlLabel  control={<Checkbox size='small' onChange={(e) => handleCheckboxChangeV2('I', 'P')}/>} label="Partial" />
+                        <FormControlLabel  control={<Checkbox size='small' onChange={(e) => handleCheckboxChangeV2('I', 'C')}/>} label="Complete" />
+                    </FormGroup>
+                  </Grid>
+                  <Grid item direction={'column'} spacing={2} width={'100%'}>
+                    <ListItemText primary="Availability" />
+                    <FormGroup>
+                        <FormControlLabel  control={<Checkbox size='small' onChange={(e) => handleCheckboxChangeV2('A', 'N')}/>} label="None" />
+                        <FormControlLabel  control={<Checkbox size='small' onChange={(e) => handleCheckboxChangeV2('A', 'P')}/>} label="Partial" />
+                        <FormControlLabel  control={<Checkbox size='small' onChange={(e) => handleCheckboxChangeV2  ('A', 'C')}/>} label="Complete" />
+                    </FormGroup>
+                  </Grid>
+                </Stack>
+              </ListItem>
+            </>
+          )}
+
+
+        
 
           <ListItem>
             <Grid

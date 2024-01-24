@@ -108,7 +108,7 @@ const Navbar = () => {
       <TextField
         id="keywordSearch"
         name="keywordSearch"
-        placeholder="Search keyword (CVE id,vendor, product, etc.)"
+        placeholder="Search keyword (CVE ID,vendor, product, etc.)"
         type="search"
         value={keyword}
         onChange={(e) => setKeyword(e.target.value)}
