@@ -296,6 +296,7 @@ const IndexPage = ({ onSelectLetter }) => {
                       onChange={(e) => setCPE((prevCPE) => ({ ...prevCPE, type: e.target.value }))}
                       // label="Select Version"
                     >
+                      <MenuItem value="*">All</MenuItem>
                       <MenuItem value="a">Applications</MenuItem>
                       <MenuItem value="h">Hardware</MenuItem>
                       <MenuItem value="0">Operating System</MenuItem>
