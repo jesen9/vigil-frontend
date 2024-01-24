@@ -33,6 +33,7 @@ const IndexPage = ({ onSelectLetter }) => {
   const today = dayjs();
   const router = useRouter();
   const [CWEID, setCWEID] = React.useState(null);
+  const [isUpdated, setIsUpdated] = React.useState(false);
   const [keyword, setKeyword] = React.useState(null);
   const [selectedVersion, setSelectedVersion] = useState("");
   const [CPE, setCPE] = useState({
@@ -227,9 +228,10 @@ const IndexPage = ({ onSelectLetter }) => {
         urlPrefix = 'cvssV2Metrics=';
     }
 
-  
+    console.log("isupdate", isUpdated)
     const queryParams = [
       cvssParam && `${urlPrefix}${cvssParam}`,
+      isUpdated  && `isUpdated=${isUpdated}`,
       formatDate(startDate) && `pubStartDate=${encodeURIComponent(formatDate(startDate))}`,
       formatDate(endDate) && `pubEndDate=${encodeURIComponent(formatDate(endDate))}`,
       // formatDate(upStartDate) && `lastModStartDate=${encodeURIComponent(formatDate(upStartDate))}`,
@@ -382,7 +384,7 @@ const IndexPage = ({ onSelectLetter }) => {
 
               <Grid item xs={12} sm={4}>
                 
-            <FormControlLabel  control={<Checkbox size='small'/>} label="Is Updated" />
+            <FormControlLabel  control={<Checkbox size='small' onChange={() => setIsUpdated(!isUpdated)} disabled= {!startDate || !endDate}/>} label="Is updated" />
               </Grid>
             </LocalizationProvider>
             
