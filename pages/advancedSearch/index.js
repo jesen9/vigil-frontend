@@ -37,10 +37,10 @@ const IndexPage = ({ onSelectLetter }) => {
   const [keyword, setKeyword] = React.useState(null);
   const [selectedVersion, setSelectedVersion] = useState("");
   const [CPE, setCPE] = useState({
-    type:"*",
-    vendor:"*",
-    product:"*",
-    version:"*",
+    type:"",
+    vendor:"",
+    product:"",
+    version:"",
   }); 
 
   const [selectedOptionsV3, setSelectedOptionsV3] = useState({
@@ -171,28 +171,33 @@ const IndexPage = ({ onSelectLetter }) => {
     }
   };
 
-  const handleUpStartDateChange = (newStartValue) => {
-    setUpStartDate(newStartValue);
-  };
+  // const handleUpStartDateChange = (newStartValue) => {
+  //   setUpStartDate(newStartValue);
+  // };
 
-  const handleUpEndDateChange = (newStopValue) => {
-    if (upStartDate) {
-      const maxEndDate = dayjs(upStartDate).add(120, 'days');
-      if (dayjs(newStopValue).isAfter(maxEndDate)) {
-        // If the selected EndDate is more than 120 days from startDate, reset it
-        setEndDate(null);
-        alert('The range between start date and stop date should not be more than 120 days.');
-      } else {
-        setUpEndDate(newStopValue);
-      }
-    } else {
-      // If there is no startDate selected, set the EndDate directly
-      setUpEndDate(newStopValue);
-    }
-  };
+  // const handleUpEndDateChange = (newStopValue) => {
+  //   if (upStartDate) {
+  //     const maxEndDate = dayjs(upStartDate).add(120, 'days');
+  //     if (dayjs(newStopValue).isAfter(maxEndDate)) {
+  //       // If the selected EndDate is more than 120 days from startDate, reset it
+  //       setEndDate(null);
+  //       alert('The range between start date and stop date should not be more than 120 days.');
+  //     } else {
+  //       setUpEndDate(newStopValue);
+  //     }
+  //   } else {
+  //     // If there is no startDate selected, set the EndDate directly
+  //     setUpEndDate(newStopValue);
+  //   }
+  // };
 
   const handleClick = () => {
     const formatDate = (date) => date && date.$d.toISOString();
+    const hasValues = CPE.type !== "" || CPE.vendor !== "" || CPE.product !== "" || CPE.version !== "";
+
+    const virtualMatchString = hasValues
+  ? `virtualMatchString=cpe:2.3:${CPE.type || '*'}:${CPE.vendor || '*'}:${CPE.product || '*'}:${CPE.version || '*'}`
+  : '';
 
     if ((!startDate && endDate) || (startDate && !endDate)) {
       alert('Please insert both start date and end date in Published Date');
@@ -228,19 +233,23 @@ const IndexPage = ({ onSelectLetter }) => {
         urlPrefix = 'cvssV2Metrics=';
     }
 
-    console.log("isupdate", isUpdated)
+    // console.log("isupdate", isUpdated)
     const queryParams = [
       cvssParam && `${urlPrefix}${cvssParam}`,
-      isUpdated  && `isUpdated=${isUpdated}`,
+      // isUpdated  && `isUpdated=${isUpdated}`,
       formatDate(startDate) && `pubStartDate=${encodeURIComponent(formatDate(startDate))}`,
       formatDate(endDate) && `pubEndDate=${encodeURIComponent(formatDate(endDate))}`,
       // formatDate(upStartDate) && `lastModStartDate=${encodeURIComponent(formatDate(upStartDate))}`,
       // formatDate(upEndDate) && `lastModEndDate=${encodeURIComponent(formatDate(upEndDate))}`,
       CWEID !== null && `cweId=${encodeURIComponent(CWEID)}`,
       keyword !== null && `keywordSearch=${encodeURIComponent(keyword)}`,
-      CPE.type !== "*" && CPE.vendor !== "*" && CPE.product !== "*" && CPE.version !== "*" &&
-      `virtualMatchString=cpe:2.3:${CPE.type}:${CPE.vendor}:${CPE.product}:${CPE.version}`,
+
+      // CPE.type !== "" && CPE.vendor !== "" && CPE.product !== "" && CPE.version !== "" &&
+      // `virtualMatchString=cpe:2.3:${CPE.type}:${CPE.vendor}:${CPE.product}:${CPE.version}`,
+      hasValues && virtualMatchString,
     ].filter(Boolean).join('&');
+
+    console.log("query parameters", queryParams);
   
     const url = `/cvelist${queryParams ? `?${queryParams}` : ''}`;
     
