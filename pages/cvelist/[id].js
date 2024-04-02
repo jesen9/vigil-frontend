@@ -19,6 +19,14 @@ import {
   IconButton, 
   Modal,
   CircularProgress,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  TextField,
+  FormControlLabel,
+  Checkbox,
+  DialogActions,
+  DialogContentText,
 } from "@mui/material";
 import { useCallback, useEffect, useState } from "react";
 import { styled } from '@mui/material/styles';
@@ -34,6 +42,8 @@ import ModalInputWrapper from "../../components/ModalInputWrapper";
 import { setStorage, getStorage, deleteStorage } from "../../utils/storage";
 import ScrollToTopButton from "../../components/ScrollToTopButton";
 import { green, yellow, red, grey } from '@mui/material/colors';
+import FeedbackIcon from '@mui/icons-material/Feedback';
+import ErrorOutlineRoundedIcon from "@mui/icons-material/ErrorOutlineRounded";
 
 const LightTooltip = styled(({ className, ...props }) => (
   <Tooltip {...props} classes={{ popper: className }} />
@@ -58,6 +68,13 @@ function cveDetails () {
   const uniqueCWEIds = new Set();
   const [cveDetails, setCveDetails] = React.useState([]);
   const [open, setOpen] = useState(false);
+  const [feedbackOpen, setFeedbackOpen] = useState(false);
+  const [comments, setComments] = useState('');
+  const [selectedReports, setSelectedReports] = useState([]);
+  const [pocID, setPOCID] = useState('');
+  const [pocTitle, setPOCTitle] = useState('');
+  const [otherReport, setOtherReport] = useState('');
+  const [openDialog, setOpenDialog] = React.useState(false);
 
   console.log("notes value", notes);
 const handleTooltipOpen = () => {
@@ -66,6 +83,24 @@ const handleTooltipOpen = () => {
 
 const handleTooltipClose = () => {
   setOpen(false);
+};
+   
+const handleOpenDialog = () => {
+  setOpenDialog(true);;
+};
+
+const handleCloseDialog = () => {
+  setOpenDialog(false);
+};
+
+const handleFeedbackOpen = (pocID, pocTitle) => {
+  setPOCID(pocID);
+  setPOCTitle(pocTitle);
+  setFeedbackOpen(true);
+};
+
+const handleFeedbackClose = () => {
+  setFeedbackOpen(false);
 };
 
 
@@ -134,8 +169,49 @@ const handleTooltipClose = () => {
     }
   };
 
+  const handleSendFeedback = () => {
+    // Create a copy of selectedReports
+    const updatedSelectedReports = [...selectedReports];
+    
+    // Add otherReport to updatedSelectedReports if it's not empty
+    if (otherReport.trim() !== '') {
+      updatedSelectedReports.push(otherReport.trim());
+    }
+    
+    const feedback = {
+      pocid : pocID,
+      userID : userID,
+      feebackMsg : comments,
+      reportMsg: updatedSelectedReports,
+    }
+    // Handle sending feedback data
+    console.log('Comments:', comments);
+    console.log('Selected Reports:', updatedSelectedReports);
 
+    displayToast("success", "Your Feedback has been saved!");
+    // displayToast("error", "Error saved feedback!");
+    
+    // Close the dialog
+    handleCloseDialog();
+    handleFeedbackClose();
+  };
 
+  const handleToggleReport = (report) => {
+    if (selectedReports.includes(report)) {
+      setSelectedReports(selectedReports.filter(item => item !== report));
+    } else {
+      setSelectedReports([...selectedReports, report]);
+    }
+  };
+
+  const reportOptions = [
+    { label: "The Proof of Concept (PoC) doesn't work", value: 'pocNotWorking' },
+    { label: "The site appears to be a scam", value: 'scamSite' },
+    { label: "The link provided is broken", value: 'brokenLink' },
+    { label: "The Proof of Concept (PoC) is outdated", value: 'outdatedPoC' },
+    // Add more report options as needed
+  ];
+  
 
   return (
     <Box sx={{ width: "100%", p: 3 }}>
@@ -440,9 +516,17 @@ const handleTooltipClose = () => {
           {cveDetails && cveDetails.poc && cveDetails.poc.map((poc, index) => (
             <Card key={index} sx={{ borderRadius: 3, mb: 3 }}>
              
-                <CardContent sx={{ overflow: "auto" }}>
+                <CardContent sx={{ overflow: "auto", position:'relative' }}>
+                <Tooltip title={userID? "Give feedback" : "Share Your Thoughts! Log in to Give Feedback"}>
+                  <IconButton
+                    sx={{ position: 'absolute', top: 0, right: 0 }}
+                    onClick={userID ? () => handleFeedbackOpen(poc.id, poc.title) : undefined} // Define handleFeedback function
+                  >
+                    <FeedbackIcon />
+                  </IconButton>
+                </Tooltip>
                   <Typography variant="subtitle1" component="div" sx={{mb:1, fontWeight:'500'}}>
-                    {poc.title}
+                    {poc.title} 
                   </Typography>
                   <Divider/>
                   <Typography variant="body2" color="text.secondary" sx={{ p:1, mb:1}}>
@@ -458,6 +542,98 @@ const handleTooltipClose = () => {
 
           </CardContent>
       </Card>
+
+      <Dialog open={feedbackOpen} onClose={handleFeedbackClose}>
+        <DialogTitle>Provide Feedback for This {pocTitle} </DialogTitle>
+        <DialogContent>
+          <TextField
+            label="Additional Comments"
+            multiline
+            rows={4}
+            value={comments}
+            onChange={(e) => setComments(e.target.value)}
+            fullWidth
+            margin="normal"
+          />
+          <Typography variant="subtitle1">Report:</Typography>
+          {reportOptions.map(option => (
+            <FormControlLabel
+              key={option.value}
+              control={
+                <Checkbox 
+                  checked={selectedReports.includes(option.value)} 
+                  onChange={() => handleToggleReport(option.value)} 
+                />
+              }
+              label={option.label}
+            />
+          ))}
+          {/* Add more report options similarly */}
+          <TextField
+            label="Other (please specify)"
+            fullWidth
+            margin="normal"
+            onChange={(e) => setOtherReport(e.target.value)}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleFeedbackClose} color="secondary">
+            Cancel
+          </Button>
+          <Button onClick={handleOpenDialog} color="primary">
+            Send
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog open={openDialog} onClose={handleCloseDialog}>
+          <DialogTitle sx={{ color: "#dd2c00" }} align="center">
+            {<ErrorOutlineRoundedIcon sx={{ fontSize: 60 }} />}
+          </DialogTitle>
+          <DialogContent>
+          <DialogContentText
+            sx={{ color: "text.secondary", pb: 1.2 }}
+            align="center"
+          >
+             You are about to add this Feedback:
+          </DialogContentText>
+
+          <DialogContentText sx={{ color: "text.secondary" }} align="center">
+            {pocTitle} 
+          </DialogContentText>
+
+          <DialogContentText
+            sx={{ color: "text.secondary", pt: 1.2 }}
+            align="center"
+          >
+            Are you sure?
+          </DialogContentText>
+          </DialogContent>
+          <DialogContent align="center">
+
+          <Button
+            sx={{ mx: 1 }}
+            variant="outlined"
+            color="error"
+            size="small"
+            onClick={handleCloseDialog}
+          >
+            No
+          </Button>
+
+          <Button
+            sx={{ mx: 1 }}
+            variant="contained"
+            color="primary"
+            size="small"
+            // onClick={() => debounceMountInsertNotes(cveID, notesContent)}
+            onClick={() => handleSendFeedback()}
+          >
+            Yes
+          </Button>
+        </DialogContent>
+
+        </Dialog> 
 
             {/* ------------------------------------ MODAL LOADING ------------------------------------ */}
 
