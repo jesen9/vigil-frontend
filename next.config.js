@@ -36,8 +36,10 @@ const GenerateCSP = () => {
 
       // img-src
       // add_header('img-src', `'self'`);
-      add_header('img-src', `http://localhost:8080/`);
-      add_header('img-src', `https://vigil-frontend-*.vercel.app/`);
+      // add_header('img-src', `http://localhost:8080/`);
+      // add_header('img-src', `https://vigil-frontend-*.vercel.app/`);
+      add_header('img-src', 'http://localhost:8080/ https://vigil-frontend-*.vercel.app/');
+
 
       // manifest-src
       add_header('manifest-src', `'none'`);
