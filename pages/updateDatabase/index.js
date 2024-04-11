@@ -85,14 +85,14 @@ import {
     return (
       <Box sx={{ width: "100%", p: 3 }}>
         <Grid container justifyContent="center" alignItems="center" sx={{mb:2}}>
-          <Image 
+          {/* <Image 
             src="/static/logo/vigil.png"
             alt="Description of the image"
             priority
             width={150}
             height={150}
             // include other necessary props like width and height
-            />
+            /> */}
             
             {/* <Typography variant="h5" sx={{ fontWeight: 600, mt: 0.5, mb: 2 }}>
               CVE FILTERING
