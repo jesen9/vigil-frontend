@@ -48,10 +48,12 @@ const GenerateCSP = () => {
       add_header('object-src', `'none'`);
 
       // script-src
+      add_header('script-src', `http://localhost:8080/`);
       add_header('script-src', `https://vigil-frontend-nwaqhtfxq-gabrielas-projects-da3d6438.vercel.app/`);
-      add_header('style-src', `'nonce-${nonce}'`);      
+      add_header('script-src', `'nonce-${nonce}'`);      
 
       // style-src
+      add_header('style-src', `http://localhost:8080/`);
       add_header('style-src',`https://vigil-frontend-nwaqhtfxq-gabrielas-projects-da3d6438.vercel.app/`);
       add_header('style-src', `'nonce-${nonce}'`);
     }
