@@ -151,7 +151,7 @@ const handleFeedbackClose = () => {
     if(userID){
       debounceMountNotes(router.query.id);
     }
-  }, [router.isReady]);
+  }, [router.isReady,router.query.id, userID]);
 
 
   const getBackgroundColor = (severity) => {
