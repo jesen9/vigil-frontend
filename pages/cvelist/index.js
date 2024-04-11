@@ -50,7 +50,7 @@ import { color } from "@mui/system";
 import useToast from "../../utils/toast";
 
 
-const factoryclassification= () => {
+const CVEList= () => {
   const router = useRouter();
   const [displayToast] = useToast();
   const [isModalLoading, setIsModalLoading] = useState(false);
@@ -220,4 +220,4 @@ const factoryclassification= () => {
   );
 }
 
-export default factoryclassification;
+export default CVEList;

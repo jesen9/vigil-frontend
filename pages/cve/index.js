@@ -19,7 +19,7 @@ import {
   FormControl,
   InputLabel,
 } from "@mui/material";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useState } from "react";
 import { debounce } from "lodash";
 import { useRouter } from 'next/router';
 import AddIcon from "@mui/icons-material/Add";
@@ -34,16 +34,16 @@ import dayjs, { Dayjs } from 'dayjs';
 import { color } from "@mui/system";
 
 
-function factoryclassification() {
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+function CVEFiltering() {
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
   const router = useRouter();
-  const [startDate, setStartDate] = React.useState(null);
-  const [endDate, setEndDate] = React.useState(null);
-  const [CVEID, setCVEID] = React.useState(null);
-  const [cvss, setCvss] = React.useState(null);
-  const [cvssV2, setCvssV2] = React.useState(null);
-  const [cvssV3, setCvssV3] = React.useState(null);
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
+  const [CVEID, setCVEID] = useState(null);
+  const [cvss, setCvss] = useState(null);
+  const [cvssV2, setCvssV2] = useState(null);
+  const [cvssV3, setCvssV3] = useState(null);
   const today = dayjs();
   const cvssVersion = ['cvssV2', 'cvssV3'];
   const [selectedVersion, setSelectedVersion] = useState("");
@@ -352,4 +352,4 @@ function factoryclassification() {
   );
 }
 
-export default factoryclassification;
+export default CVEFiltering;

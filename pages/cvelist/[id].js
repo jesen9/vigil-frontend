@@ -58,7 +58,7 @@ const LightTooltip = styled(({ className, ...props }) => (
 
 
 
-function cveDetails () {
+function CVEDetails () {
   const router = useRouter();
   const [displayToast] = useToast();
   const [notes, setNotes] = useState('');
@@ -666,4 +666,4 @@ const handleFeedbackClose = () => {
   );
 }
 
-export default cveDetails;
+export default CVEDetails;
