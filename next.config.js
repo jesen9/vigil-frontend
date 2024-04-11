@@ -20,11 +20,10 @@ const GenerateCSP = () => {
 
       // connect-src
       // add_header('connect-src', `'self'`);
-      add_header('connect-src', `https://*.pharmalink.id/`);
+      add_header('connect-src', `'none'`);
 
       // default-src
-      add_header('default-src', `http://localhost:8080/`);
-      add_header('default-src', `https://*.pharmalink.id/`);
+      add_header('default-src',`'none'`);
       
       // font-src
       add_header('font-src', `'none'`);
@@ -37,8 +36,7 @@ const GenerateCSP = () => {
 
       // img-src
       // add_header('img-src', `'self'`);
-      add_header('img-src', `http://localhost:8080/`);
-      add_header('img-src', `https://*.pharmalink.id/`);
+      add_header('img-src', `'none'`);
 
       // manifest-src
       add_header('manifest-src', `'none'`);
@@ -50,13 +48,10 @@ const GenerateCSP = () => {
       add_header('object-src', `'none'`);
 
       // script-src
-      add_header('script-src', `http://localhost:8080/`);
-      add_header('script-src', `'nonce-${nonce}'`);
+      add_header('script-src', `'none'`);
 
       // style-src
-      add_header('style-src', `http://localhost:8080/`);
-      add_header('style-src', `https://*.pharmalink.id/`);
-      add_header('style-src', `'nonce-${nonce}'`);
+      add_header('style-src',`'none'`);
     }
 
         // return the object in a formatted value (this won't work on IE11 without a polyfill!)
