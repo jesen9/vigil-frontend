@@ -41,7 +41,7 @@ import { color } from "@mui/system";
 
 
 
-function factoryclassification() {
+function HomePage() {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const router = useRouter();
@@ -166,4 +166,4 @@ function factoryclassification() {
   );
 }
 
-export default factoryclassification;
+export default HomePage;
