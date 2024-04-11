@@ -86,7 +86,7 @@ import {
       <Box sx={{ width: "100%", p: 3 }}>
         <Grid container justifyContent="center" alignItems="center" sx={{mb:2}}>
           <Image 
-            src="/static/logo/Vigil.png"
+            src="/static/logo/vigil.png"
             alt="Description of the image"
             priority
             width={150}
