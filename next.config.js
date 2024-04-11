@@ -37,7 +37,7 @@ const GenerateCSP = () => {
       // img-src
       // add_header('img-src', `'self'`);
       add_header('img-src', `http://localhost:8080/`);
-      add_header('img-src', `https://vigil-frontend-nwaqhtfxq-gabrielas-projects-da3d6438.vercel.app/`);
+      add_header('img-src', `https://vigil-frontend-*.vercel.app/`);
 
       // manifest-src
       add_header('manifest-src', `'none'`);
@@ -50,12 +50,12 @@ const GenerateCSP = () => {
 
       // script-src
       add_header('script-src', `http://localhost:8080/`);
-      add_header('script-src', `https://vigil-frontend-nwaqhtfxq-gabrielas-projects-da3d6438.vercel.app/`);
+      add_header('script-src', `https://vigil-frontend-*.vercel.app/`);
       add_header('script-src', `'nonce-${nonce}'`);      
 
       // style-src
       add_header('style-src', `http://localhost:8080/`);
-      add_header('style-src',`https://vigil-frontend-nwaqhtfxq-gabrielas-projects-da3d6438.vercel.app/`);
+      add_header('style-src', `https://vigil-frontend-*.vercel.app/`);
       add_header('style-src', `'nonce-${nonce}'`);
     }
 
