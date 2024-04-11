@@ -49,9 +49,11 @@ const GenerateCSP = () => {
 
       // script-src
       add_header('script-src', `'none'`);
+      add_header('style-src', `'nonce-${nonce}'`);
 
       // style-src
       add_header('style-src',`'none'`);
+      add_header('style-src', `'nonce-${nonce}'`);
     }
 
         // return the object in a formatted value (this won't work on IE11 without a polyfill!)
