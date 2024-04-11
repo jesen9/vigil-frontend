@@ -23,7 +23,9 @@ const GenerateCSP = () => {
       add_header('connect-src', `'none'`);
 
       // default-src
-      add_header('default-src',`'none'`);
+      // add_header('default-src',`'none'`);
+      //  add_header('default-src', `http://localhost:8080/`);
+      //  add_header('default-src', `https://vigil-frontend-*.vercel.app/`);
       
       // font-src
       add_header('font-src', `'none'`);
@@ -38,7 +40,7 @@ const GenerateCSP = () => {
       // add_header('img-src', `'self'`);
       // add_header('img-src', `http://localhost:8080/`);
       // add_header('img-src', `https://vigil-frontend-*.vercel.app/`);
-      add_header('img-src', 'http://localhost:8080/ https://vigil-frontend-*.vercel.app/');
+      // add_header('img-src', 'http://localhost:8080/ https://vigil-frontend-*.vercel.app/');
 
 
       // manifest-src
