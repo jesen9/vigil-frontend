@@ -158,7 +158,7 @@ function HomePage() {
            
           </CardContent>
           <CardActions sx={{ overflow: "auto", m:1 }}>
-              <Button size="small" variant="contained" onClick={handleClick}>Let's Start Now!</Button>
+              <Button size="small" variant="contained" onClick={handleClick}>Let&apos;s Start Now!</Button>
           </CardActions>
       </Card>
       
