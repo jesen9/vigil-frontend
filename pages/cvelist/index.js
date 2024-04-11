@@ -30,7 +30,7 @@ import {
   ListItemText,
   ListItem, 
 } from "@mui/material";
-import { debounce, result } from "lodash";
+import { debounce } from "lodash";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import React, { useCallback, useEffect, useState } from "react";
 import ModalWrapper from "../../components/ModalWrapper";

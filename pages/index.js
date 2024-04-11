@@ -148,11 +148,11 @@ function HomePage() {
       <Card sx={{ borderRadius: 3, mt: 1, mb: 3 }}>
           <CardContent sx={{ overflow: "auto" }}>
                   <Typography variant="h5" sx={{ fontWeight: 600, mt: 1, mb: 2 }}>
-                   Welcome To Vigil!
+                  {`Welcome To Vigil!`}
                   </Typography>
                   <Divider/>
                   <Typography variant="body1" sx={{ fontWeight: 300, mt:2 }}>
-                  Vigil is a place for you to find CVE and POC 
+                  {`Vigil is a place for you to find CVE and POC`} 
                   <br />
                   </Typography>
            

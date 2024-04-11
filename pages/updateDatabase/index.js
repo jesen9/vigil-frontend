@@ -24,7 +24,7 @@ import {
     DialogTitle,
   } from "@mui/material";
   import ErrorOutlineRoundedIcon from "@mui/icons-material/ErrorOutlineRounded";
-  import React, { useCallback, useEffect, useState } from "react";
+  import React, { useCallback, useState } from "react";
   import useToast from "../../utils/toast";
   import ModalWrapper from "../../components/ModalWrapper";
   import ModalInputWrapper from "../../components/ModalInputWrapper";
@@ -35,7 +35,7 @@ import {
   import api from "../../services/api";
   
   
-  function factoryclassification() {
+  function UpdateDatabase() {
     const [openUpdate, setOpenUpdate] = React.useState(false);
     const [isModalLoading, setIsModalLoading] = useState(false);
     const [displayToast] = useToast();
@@ -185,5 +185,5 @@ import {
     );
   }
   
-  export default factoryclassification;
+  export default UpdateDatabase;
   
