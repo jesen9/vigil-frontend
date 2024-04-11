@@ -2,19 +2,10 @@ import {
     Box,
     Grid,
     CircularProgress,
-    Table,
-    TableRow,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TablePagination, // Import TablePagination
     Typography,
     Card,
     CardContent,
     CardActions,
-    CardMedia,
-    CardHeader,
-    TextField,
     Button,
     Modal,
     Divider,
@@ -26,12 +17,7 @@ import {
   import ErrorOutlineRoundedIcon from "@mui/icons-material/ErrorOutlineRounded";
   import React, { useCallback, useState } from "react";
   import useToast from "../../utils/toast";
-  import ModalWrapper from "../../components/ModalWrapper";
-  import ModalInputWrapper from "../../components/ModalInputWrapper";
   import { debounce } from "lodash";
-  import Image from 'next/image';
-  import { color, display } from "@mui/system";
-  import vigil from "../../public/static/logo/Vigil.png";
   import api from "../../services/api";
   
   
@@ -44,10 +30,7 @@ import {
     };
     const handleCloseUpdate = () => {
       setOpenUpdate(false);
-    };
-   
-   
-  
+    };  
 
     const debounceMountUpdateDatabase = useCallback(
       debounce(mountUpdateDatabase, 400),
