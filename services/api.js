@@ -13,7 +13,9 @@ const loginApi = async (loginData) => {
 
 const register = async (data) => {
   console.log("registerData", data);
-  return await api.post("/register", data);
+  data = await api.post("/register", data);
+  console.log("DataPost", data);
+  return data;
 };
 
 const getCVEList = async (params, resultsPerPage, startIndex) => {

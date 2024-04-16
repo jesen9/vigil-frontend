@@ -92,6 +92,7 @@ const Register = () => {
 
   async function onFinish() {
     try {
+      console.log("test")
       localStorage.clear();
 
       const registerData= {
