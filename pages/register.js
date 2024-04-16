@@ -115,11 +115,11 @@ const Register = () => {
         return;
       }
 
-      // console.log('gaby', registerValue) 
+      console.log('register', registerValue) 
       const response = await api.register(registerData); 
       const {data} = response;
      
-      // console.log(response, 'response Register');
+      console.log( 'response Register', response);
       if (data.message === "New user created!") {
         displayToast("success", data.message);
         // setLoading((loading = false));
@@ -132,6 +132,7 @@ const Register = () => {
         setLoading((loading = false));
       }
     } catch (error) {
+      console.log("error", error)
       displayToast("error", "Registration failed");
       setLoading((loading = false));
     }
