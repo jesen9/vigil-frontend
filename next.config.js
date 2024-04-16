@@ -21,6 +21,7 @@ const GenerateCSP = () => {
       // connect-src
       // add_header('connect-src', `'self'`);
       add_header('connect-src', `https://vigil-backend.000webhostapp.com`);
+      add_header('connect-src', `https://*.vercel.app/`);
 
       // default-src
       // add_header('default-src',`'none'`);
