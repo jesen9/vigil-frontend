@@ -132,7 +132,7 @@ const Register = () => {
         setLoading((loading = false));
       }
     } catch (error) {
-      console.log("error", error)
+      console.log("error", error.response.status);
       displayToast("error", "Registration failed");
       setLoading((loading = false));
     }
