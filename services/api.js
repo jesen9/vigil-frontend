@@ -12,6 +12,7 @@ const loginApi = async (loginData) => {
 };
 
 const register = async (data) => {
+  console.log("registerData", data);
   return await api.post("/register", data);
 };
 
