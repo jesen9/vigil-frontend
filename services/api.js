@@ -11,11 +11,23 @@ const loginApi = async (loginData) => {
   return await api.post("/login", loginData);
 };
 
-const register = async (data) => {
-  console.log("registerData", data);
-  data = await api.post("/register", data);
-  console.log("DataPost", data);
-  return data;
+// const register = async (data) => {
+//   console.log("registerData", data);
+//   data = await api.post("/register", data);
+//   console.log("DataPost", data);
+//   return data;
+// };
+
+export const register = async (data) => {
+  try {
+    console.log("registerData", data);
+    const response = await apiLogin.post("/register", {
+      data
+    });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
 };
 
 const getCVEList = async (params, resultsPerPage, startIndex) => {
