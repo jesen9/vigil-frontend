@@ -128,7 +128,7 @@ const Register = () => {
 
       } else {
         console.log("Registration failed");
-        displayToast("error", data.message);
+        displayToast("errorIN", data.message);
         setLoading((loading = false));
       }
     } catch (error) {
