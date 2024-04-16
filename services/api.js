@@ -21,7 +21,7 @@ const loginApi = async (loginData) => {
 export const register = async (data) => {
   try {
     console.log("registerData", data);
-    const response = await apiLogin.post("/register", {
+    const response = await api.post("/register", {
       data
     });
     return response.data;
